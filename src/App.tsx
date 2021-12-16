@@ -3,8 +3,6 @@ import 'semantic-ui-css/semantic.min.css'
 
 import { Container, Grid, Button, Segment } from 'semantic-ui-react';
 import { MenuBar } from './components/MenuBar';
-import { DrawingModal } from './modals/components/DrawingModal';
-import { HelpModal } from './modals/components/HelpModal';
 import { usePdf, Pdf } from './hooks/usePdf';
 import { AttachmentTypes } from './entities';
 import { ggID } from './utils/helpers';
@@ -15,8 +13,6 @@ import { Page } from './components/Page';
 import { Attachments } from './components/Attachments';
 
 const App: React.FC<{}> = () => {
-    const [helpModalOpen, setHelpModalOpen] = useState(false);
-    const [drawingModalOpen, setDrawingModalOpen] = useState(false);
     const { file, initialize, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
     const { add: addAttachment, allPageAttachments, pageAttachments, reset: resetAttachments, update, remove, setPageIndex } = useAttachments();
     
@@ -50,20 +46,6 @@ const App: React.FC<{}> = () => {
         };
         addAttachment(newTextAttachment);
     };
-
-    const addDrawing = (drawing?: { width: number, height: number, path: string }) => {
-        if (!drawing) return;
-
-        const newDrawingAttachment: DrawingAttachment = {
-            id: ggID(),
-            type: AttachmentTypes.DRAWING,
-            ...drawing,
-            x: 0,
-            y: 0,
-            scale: 1,
-        }
-        addAttachment(newDrawingAttachment);
-    }
 
     useLayoutEffect(() => setPageIndex(pageIndex), [pageIndex, setPageIndex]);
 
@@ -100,11 +82,9 @@ const App: React.FC<{}> = () => {
         >
             { hiddenInputs }
             <MenuBar
-                openHelp={() => setHelpModalOpen(true)}
                 savePdf={handleSavePdf}
                 addText={addText}
                 addImage={handleImageClick}
-                addDrawing={() => setDrawingModalOpen(true)}
                 savingPdfStatus={isSaving}
                 uploadNewPdf={handlePdfClick}
                 isPdfLoaded={!!file}
@@ -159,16 +139,6 @@ const App: React.FC<{}> = () => {
                 </Grid.Row>
             </Grid>
             )}
-            <DrawingModal 
-                open={drawingModalOpen} 
-                dismiss={() => setDrawingModalOpen(false)}
-                confirm={addDrawing}
-            />
-
-            <HelpModal 
-                open={helpModalOpen}
-                dismiss={() => setHelpModalOpen(false)}
-            />
         </Container>
     );
 }

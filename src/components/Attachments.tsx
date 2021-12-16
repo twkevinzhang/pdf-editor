@@ -1,7 +1,6 @@
 import React from 'react';
 import { AttachmentTypes } from '../entities';
 import { Image } from '../containers/Image';
-import { Drawing } from '../containers/Drawing';
 import { Text } from '../containers/Text';
 
 interface Props {
@@ -23,10 +22,9 @@ export const Attachments: React.FC<Props> = ({
     attachment: Partial<Attachment>
   ) => updateAttachment(index, attachment);
 
-  return attachments ? (
+  return attachments? (
     <>
-      {attachments.length
-        ? attachments.map((attachment, index) => {
+      {attachments.map((attachment, index) => {
             const key = `${pdfName}-${index}`;
 
             if (attachment.type === AttachmentTypes.IMAGE) {
@@ -38,19 +36,6 @@ export const Attachments: React.FC<Props> = ({
                   removeImage={() => removeAttachment(index)}
                   updateImageAttachment={handleAttachmentUpdate(index)}
                   {...(attachment as ImageAttachment)}
-                />
-              );
-            }
-
-            if (attachment.type === AttachmentTypes.DRAWING) {
-              return (
-                <Drawing
-                  key={key}
-                  pageWidth={pageDimensions.width}
-                  pageHeight={pageDimensions.height}
-                  removeDrawing={() => removeAttachment(index)}
-                  updateDrawingAttachment={handleAttachmentUpdate(index)}
-                  {...(attachment as DrawingAttachment)}
                 />
               );
             }
@@ -67,8 +52,6 @@ export const Attachments: React.FC<Props> = ({
               );
             }
             return null;
-          })
-        : null}
-    </>
-  ) : null;
+          })}
+    </> ) : null
 };

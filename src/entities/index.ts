@@ -21,7 +21,6 @@ export enum Color {
 
 export enum AttachmentTypes {
   IMAGE = 'image',
-  DRAWING = 'drawing',
   TEXT = 'text',
 }
 

@@ -9,7 +9,7 @@ declare interface Window {
   ) => W3Color;
 }
 
-type AttachmentType = 'image' | 'text' | 'drawing';
+type AttachmentType = 'image' | 'text';
 
 interface AttachmentBase {
   id: () => number;

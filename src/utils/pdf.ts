@@ -70,46 +70,6 @@ export async function save(
             x,
             y: pageHeight - size! - y,
           });
-      } else if (object.type === 'drawing') {
-        const {
-          x,
-          y,
-          path,
-          scale,
-          stroke,
-          strokeWidth,
-        } = object as DrawingAttachment;
-        const {
-          pushGraphicsState,
-          setLineCap,
-          popGraphicsState,
-          setLineJoin,
-          LineCapStyle,
-          LineJoinStyle,
-          rgb,
-        } = PDFLib;
-        return () => {
-          page.pushOperators(
-            pushGraphicsState(),
-            setLineCap(LineCapStyle.Round),
-            setLineJoin(LineJoinStyle.Round)
-          );
-
-          const color = window.w3color(stroke!).toRgb();
-
-          page.drawSvgPath(path, {
-            borderColor: rgb(
-              normalize(color.r),
-              normalize(color.g),
-              normalize(color.b)
-            ),
-            borderWidth: strokeWidth,
-            scale,
-            x,
-            y: pageHeight - y,
-          });
-          page.pushOperators(popGraphicsState());
-        };
       }
     });
     // embed objects in order

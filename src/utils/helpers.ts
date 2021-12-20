@@ -10,6 +10,17 @@ export function ggID(): () => number {
   };
 }
 
+/**
+ *
+ * @param x of original position
+ * @param y of original position
+ * @param dragX of moved distance
+ * @param dragY of moved distance
+ * @param width of Canvas
+ * @param height of Canvas
+ * @param pageWidth of Pdf Dimensions
+ * @param pageHeight of Pdf Dimensions
+ */
 export const getMovePosition = (
   x: number,
   y: number,

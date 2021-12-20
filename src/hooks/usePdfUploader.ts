@@ -11,47 +11,6 @@ export enum UploadTypes {
   IMAGE = 'image',
 }
 
-const handlers = {
-  pdf: async (file: File) => {
-    try {
-      const pdf = await readAsPDF(file);
-      return {
-        file,
-        name: file.name,
-        pages: Array(pdf.numPages)
-          .fill(0)
-          .map((_, index) => pdf.getPage(index + 1)),
-      } as Pdf;
-    } catch (error) {
-      console.log('Failed to load pdf', error);
-      throw new Error('Failed to load PDF');
-    }
-  },
-  image: async (file: File) => {
-    try {
-      const url = await readAsDataURL(file);
-      const img = await readAsImage(url as string);
-      const id = ggID();
-      const { width, height } = img;
-
-      const imageAttachemnt: ImageAttachment = {
-        id,
-        type: AttachmentTypes.IMAGE,
-        width,
-        height,
-        x: 0,
-        y: 0,
-        img,
-        file,
-      };
-      return imageAttachemnt;
-    } catch (error) {
-      console.log('Failed to load image', error);
-      throw new Error('Failed to load image');
-    }
-  },
-};
-
 /**
  * @function useUploader
  *
@@ -60,14 +19,10 @@ const handlers = {
  * @
  * @param use UploadTypes
  */
-export const useUploader = ({
-  use,
+export const usePdfUploader = ({
   afterUploadPdf,
-  afterUploadAttachment,
 }: {
-  use: UploadTypes;
   afterUploadPdf?: (upload: Pdf) => void;
-  afterUploadAttachment?: (upload: Attachment) => void;
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const inputRef = createRef<HTMLInputElement>();
@@ -102,17 +57,30 @@ export const useUploader = ({
 
     const file = files[0];
 
-    const result = await handlers[use](file);
+    const result = await handler(file);
 
-    if (use === UploadTypes.PDF && afterUploadPdf) {
+    if (afterUploadPdf) {
       afterUploadPdf(result as Pdf);
     }
 
-    if (use === UploadTypes.IMAGE && afterUploadAttachment) {
-      console.log('===> was this also called');
-      afterUploadAttachment(result as ImageAttachment);
-    }
     setIsUploading(false);
+
+    async function handler(file: File) {
+      try {
+        const pdf = await readAsPDF(file);
+        return {
+          file,
+          name: file.name,
+          pages: Array(pdf.numPages)
+            .fill(0)
+            .map((_, index) => pdf.getPage(index + 1)),
+        } as Pdf;
+      } catch (error) {
+        console.log('Failed to load pdf', error);
+        throw new Error('Failed to load PDF');
+      }
+    }
+
     return;
   };
 

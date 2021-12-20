@@ -4,9 +4,10 @@ import './App.css';
 import {usePdfUploader} from "./hooks/usePdfUploader";
 import {Pdf, usePdf} from "./hooks/usePdf";
 import { Button } from 'semantic-ui-react';
+import { Page } from './components/Page';
 
 const App: React.FC<{}> = () => {
-    const { file, initialize, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
+    const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
 
     const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
         after: (uploaded: Pdf)=>{
@@ -34,6 +35,12 @@ const App: React.FC<{}> = () => {
     <div className="App">
       {hiddenInputs}
       <Button onClick={handleClick}>upload</Button>
+
+      <Page
+        dimensions={dimensions}
+        updateDimensions={setDimensions}
+        page={currentPage}
+      />
 
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />

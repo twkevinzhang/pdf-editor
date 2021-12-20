@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 interface Props {
   page: any;
   dimensions?: Dimensions;
-  updateDimensions: ({ width, height }: Dimensions) => void;
+  updateDimensions?: ({ width, height }: Dimensions) => void;
 }
 
 export const Page = ({ page, dimensions, updateDimensions }: Props) => {
@@ -34,7 +34,7 @@ export const Page = ({ page, dimensions, updateDimensions }: Props) => {
             height: viewport.height,
           };
 
-          updateDimensions(newDimensions as Dimensions);
+          if(updateDimensions) updateDimensions(newDimensions as Dimensions);
         }
       }
     }

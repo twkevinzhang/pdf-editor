@@ -112,35 +112,25 @@ export const useAttachments = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { allPageAttachments, pageAttachments } = state;
 
-  const add = (newAttachment: Attachment) =>
-    dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment });
-
-  const remove = (attachmentIndex: number) =>
-    dispatch({ type: ActionType.REMOVE_ATTACHMENT, attachmentIndex });
-
-  const update = (attachmentIndex: number, attachment: Partial<Attachment>) =>
-    dispatch({
-      type: ActionType.UPDATE_ATTACHMENT,
-      attachmentIndex,
-      attachment,
-    });
-
-  const reset = (numberOfPages: number) =>
-    dispatch({ type: ActionType.RESET, numberOfPages });
-
-  const setPageIndex = useCallback(
-    (index: number) =>
-      dispatch({ type: ActionType.UPDATE_PAGE_INDEX, pageIndex: index }),
-    [dispatch]
-  );
-
   return {
-    add,
-    reset,
-    remove,
-    update,
-    setPageIndex,
     pageAttachments,
     allPageAttachments,
+    add: (newAttachment: Attachment) =>
+      dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }),
+    reset: (numberOfPages: number) =>
+      dispatch({ type: ActionType.RESET, numberOfPages }),
+    remove: (attachmentIndex: number) =>
+      dispatch({ type: ActionType.REMOVE_ATTACHMENT, attachmentIndex }),
+    update: (attachmentIndex: number, attachment: Partial<Attachment>) =>
+      dispatch({
+        type: ActionType.UPDATE_ATTACHMENT,
+        attachmentIndex,
+        attachment,
+      }),
+    setPageIndex: useCallback(
+      (index: number) =>
+        dispatch({ type: ActionType.UPDATE_PAGE_INDEX, pageIndex: index }),
+      [dispatch]
+    ),
   };
 };

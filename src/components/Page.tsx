@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 interface Props {
   page: any;
   dimensions?: Dimensions;
-  updateDimensions?: ({ width, height }: Dimensions) => void;
+  setDimensions?: ({ width, height }: Dimensions) => void;
 }
 
-export const Page = ({ page, dimensions, updateDimensions }: Props) => {
+export const Page = ({ page, dimensions, setDimensions }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(dimensions?.width || 0);
   const [height, setHeight] = useState(dimensions?.height || 0);
@@ -34,11 +34,11 @@ export const Page = ({ page, dimensions, updateDimensions }: Props) => {
             height: viewport.height,
           };
 
-          if(updateDimensions) updateDimensions(newDimensions as Dimensions);
+          if(setDimensions) setDimensions(newDimensions as Dimensions);
         }
       }
     }
-  }, [page, updateDimensions]);
+  }, [page, setDimensions]);
 
   return (
     <div>

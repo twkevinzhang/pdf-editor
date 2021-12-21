@@ -59,10 +59,12 @@ const App: React.FC<{}> = () => {
       {hiddenInputs}
       <Button onClick={handleClick}>upload</Button>
       <Button onClick={handleTextImage}>add text</Button>
+      <Button onClick={async ()=> {
+        await savePdf(allPageAttachments);
+      }}>save</Button>
 
       <Page
-        // dimensions={dimensions}
-        updateDimensions={setDimensions}
+        setDimensions={setDimensions}
         page={currentPage}
       />
 

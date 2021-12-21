@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import {usePdfUploader} from "./hooks/usePdfUploader";
 import {Pdf, usePdf} from "./hooks/usePdf";
-import { Button } from 'semantic-ui-react';
+import { Container, Button, Row, Col, Card } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Page } from './components/Page';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
@@ -57,12 +58,26 @@ const App: React.FC<{}> = () => {
     return (
     <div className="App">
       {hiddenInputs}
+      <Container
+        style={{ margin: 30 }}
+      >
       <Button onClick={handleClick}>upload</Button>
       <Button onClick={handleTextImage}>add text</Button>
       <Button onClick={async ()=> {
         await savePdf(allPageAttachments);
       }}>save</Button>
 
+      <div>
+        <Row>
+          <Col sm={3}>
+            {isMultiPage && !isFirstPage && (
+              <Button onClick={previousPage} />
+            )}
+          </Col>
+      <Col sm={6}>
+      <Card
+        style={{ position: 'relative' }}
+      >
       <Page
         setDimensions={setDimensions}
         page={currentPage}
@@ -78,6 +93,16 @@ const App: React.FC<{}> = () => {
         />
       )}
 
+      </Card>
+      </Col>
+          <Col sm={3}>
+            {isMultiPage && !isLastPage && (
+              <Button onClick={nextPage} />
+            )}
+          </Col>
+      </Row>
+      </div>
+
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -92,6 +117,7 @@ const App: React.FC<{}> = () => {
           Learn React
         </a>
       </header>
+      </Container>
     </div>
   );
 }

@@ -13,10 +13,10 @@ interface Props {
   positionTop: number;
   positionLeft: number;
   toggleEditMode: () => void;
-  handleMouseDown: DragEventListener<HTMLDivElement>;
-  handleMouseUp: DragEventListener<HTMLDivElement>;
-  handleMouseMove: DragEventListener<HTMLDivElement>;
-  handleMouseOut: DragEventListener<HTMLDivElement>;
+  handleMouseDown?: DragEventListener<HTMLDivElement>;
+  handleMouseUp?: DragEventListener<HTMLDivElement>;
+  handleMouseMove?: DragEventListener<HTMLDivElement>;
+  handleMouseOut?: DragEventListener<HTMLDivElement>;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Text as Component } from '../components/Text';
 import { getMovePosition } from '../utils/helpers';
 import { DragActions, TextMode } from '../entities';
-import { useDrag } from '../hooks/useDrag';
+import { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 
 interface Props {
   pageWidth: number;
@@ -27,17 +27,12 @@ export const Text = ({
   const [content, setContent] = useState(text || '');
   const [textMode, setTextMode] = useState<TextMode>(TextMode.COMMAND);
 
-  const {
-    handleMousedown,
-    positionLeft,
-    positionTop,
-  } = useDrag({
-    startX: x, startY: y,
-    width,
-    height,
-    pageHeight,
-    pageWidth,
-  });
+  const onStop =(e: DraggableEvent,  data: DraggableData) =>{
+    updateTextAttachment({
+      x: data.x,
+      y: data.y,
+    });
+  }
 
   const prepareTextAndUpdate = () => {
     // Deselect any selection when returning to command mode
@@ -80,14 +75,11 @@ export const Text = ({
       lineHeight={lineHeight}
       inputRef={inputRef}
       fontFamily={fontFamily}
-      positionTop={positionTop}
+      initY={y}
       onChangeText={onChangeText}
-      positionLeft={positionLeft}
-      // handleMouseUp={handleMouseUp}
+      initX={x}
       toggleEditMode={toggleEditMode}
-      // handleMouseOut={handleMouseOut}
-      handleMouseDown={handleMousedown}
-      // handleMouseMove={handleMouseMove}
+      onStop={onStop}
     />
   );
 };

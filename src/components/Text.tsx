@@ -1,5 +1,6 @@
 import React, { RefObject } from 'react';
 import { TextMode } from '../entities';
+import Draggable, { DraggableEventHandler } from 'react-draggable';
 
 interface Props {
   inputRef: RefObject<HTMLInputElement>;
@@ -10,13 +11,10 @@ interface Props {
   height: number;
   lineHeight?: number;
   fontFamily?: string;
-  positionTop: number;
-  positionLeft: number;
+  initY: number;
+  initX: number;
   toggleEditMode: () => void;
-  handleMouseDown?: DragEventListener<HTMLDivElement>;
-  handleMouseUp?: DragEventListener<HTMLDivElement>;
-  handleMouseMove?: DragEventListener<HTMLDivElement>;
-  handleMouseOut?: DragEventListener<HTMLDivElement>;
+  onStop?: DraggableEventHandler;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -28,62 +26,60 @@ export const Text: React.FC<Props> = ({
   mode,
   size,
   fontFamily,
-  positionTop,
-  positionLeft,
+  initY,
+  initX,
   onChangeText,
   toggleEditMode,
-  handleMouseDown,
-  handleMouseMove,
-  handleMouseOut,
-  handleMouseUp,
+  onStop,
   lineHeight,
 }) => {
   return (
     <div
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseOut={handleMouseOut}
       onDoubleClick={toggleEditMode}
       style={{
-        width,
-        border: 1,
-        height,
-        fontFamily,
-        fontSize: size,
-        lineHeight,
-        cursor: mode === TextMode.COMMAND ? 'move' : 'default',
-        top: positionTop,
-        left: positionLeft,
-        borderColor: 'gray',
-        borderStyle: 'solid',
-        wordWrap: 'break-word',
-        padding: 0,
         position: 'absolute',
       }}
     >
-      <input
-        type="text"
-        ref={inputRef}
-        onChange={onChangeText}
-        readOnly={mode === TextMode.COMMAND}
-        style={{
-          width: '100%',
-          borderStyle: 'none',
-          borderWidth: 0,
-          fontFamily,
-          fontSize: size,
-          outline: 'none',
-          padding: 0,
-          boxSizing: 'border-box',
-          lineHeight,
-          height,
-          margin: 0,
-          backgroundColor: 'transparent',
-          cursor: mode === TextMode.COMMAND ? 'move' : 'text',
-        }}
-        value={text}
-      />
+      <Draggable
+        defaultPosition={{x: initX, y: initY}}
+        onStop={onStop}>
+        <div
+          style={{
+            width,
+            border: 1,
+            fontFamily,
+            fontSize: size,
+            lineHeight,
+            borderColor: 'gray',
+            borderStyle: 'solid',
+            wordWrap: 'break-word',
+            padding: 0,
+          }}
+        >
+          <input
+            type="text"
+            ref={inputRef}
+            onChange={onChangeText}
+            readOnly={mode === TextMode.COMMAND}
+            style={{
+              width: '100%',
+              borderStyle: 'none',
+              borderWidth: 0,
+              fontFamily,
+              fontSize: size,
+              outline: 'none',
+              padding: 0,
+              boxSizing: 'border-box',
+              lineHeight,
+              height,
+              margin: 0,
+              backgroundColor: 'transparent',
+              cursor: mode === TextMode.COMMAND ? 'move' : 'text',
+            }}
+            value={text}
+          />
+        </div>
+      </Draggable>
     </div>
   );
 };

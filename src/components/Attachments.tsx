@@ -17,8 +17,6 @@ export const Attachments: React.FC<Props> = ({
   removeAttachment,
   updateAttachment,
 }) => {
-  console.warn("render Attachments")
-
   const handleAttachmentUpdate = (index: number) => (
     attachment: Partial<Attachment>
   ) => updateAttachment(index, attachment);

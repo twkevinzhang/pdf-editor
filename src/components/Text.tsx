@@ -5,7 +5,7 @@ import Draggable, { DraggableEventHandler } from 'react-draggable';
 interface Props {
   inputRef: RefObject<HTMLInputElement>;
   text?: string;
-  mode: string;
+  editing: boolean;
   width: number;
   size?: number;
   height: number;
@@ -13,7 +13,7 @@ interface Props {
   fontFamily?: string;
   initY: number;
   initX: number;
-  toggleEditMode: () => void;
+  onDoubleClick: () => void;
   onStop?: DraggableEventHandler;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -23,19 +23,19 @@ export const Text: React.FC<Props> = ({
   width,
   height,
   inputRef,
-  mode,
+  editing,
   size,
   fontFamily,
   initY,
   initX,
   onChangeText,
-  toggleEditMode,
+                                        onDoubleClick,
   onStop,
   lineHeight,
 }) => {
   return (
     <div
-      onDoubleClick={toggleEditMode}
+      onDoubleClick={onDoubleClick}
       style={{
         position: 'absolute',
       }}
@@ -60,7 +60,7 @@ export const Text: React.FC<Props> = ({
             type="text"
             ref={inputRef}
             onChange={onChangeText}
-            readOnly={mode === TextMode.COMMAND}
+            readOnly={!editing}
             style={{
               width: '100%',
               borderStyle: 'none',
@@ -74,7 +74,7 @@ export const Text: React.FC<Props> = ({
               height,
               margin: 0,
               backgroundColor: 'transparent',
-              cursor: mode === TextMode.COMMAND ? 'move' : 'text',
+              cursor: editing ? 'text': 'move' ,
             }}
             value={text}
           />

@@ -3,6 +3,7 @@ import { Text as Component } from '../components/Text';
 import { getMovePosition } from '../utils/helpers';
 import { DragActions, TextMode } from '../entities';
 import { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
+import { useMouse } from '../hooks/useMouse';
 
 interface Props {
   pageWidth: number;
@@ -25,7 +26,7 @@ export const Text = ({
            }: TextAttachment & Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState(text || '');
-  const [textMode, setTextMode] = useState<TextMode>(TextMode.COMMAND);
+  const [editing, setEditing] = useState(false);
 
   const onStop =(e: DraggableEvent,  data: DraggableData) =>{
     updateTextAttachment({
@@ -45,32 +46,33 @@ export const Text = ({
     });
   };
 
-  const toggleEditMode = () => {
-    const input = inputRef.current;
-    const mode =
-      textMode === TextMode.COMMAND ? TextMode.INSERT : TextMode.COMMAND;
-
-    setTextMode(mode);
-
-    if (input && mode === TextMode.INSERT) {
-      input.focus();
-      input.select();
-    } else {
-      prepareTextAndUpdate();
-    }
-  };
-
   const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
     setContent(value);
   };
+
+  function onDoubleClick(){
+    const input = inputRef.current;
+    setEditing(true)
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }
+
+  useMouse({onUp:()=>{
+      if(editing){
+        setEditing(false)
+        prepareTextAndUpdate();
+      }
+  }});
 
   return (
     <Component
       text={content}
       width={width}
       height={height}
-      mode={textMode}
+      editing={editing}
       size={size}
       lineHeight={lineHeight}
       inputRef={inputRef}
@@ -78,7 +80,7 @@ export const Text = ({
       initY={y}
       onChangeText={onChangeText}
       initX={x}
-      toggleEditMode={toggleEditMode}
+      onDoubleClick={onDoubleClick}
       onStop={onStop}
     />
   );

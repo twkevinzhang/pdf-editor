@@ -75,25 +75,32 @@ const App: React.FC<{}> = () => {
             )}
           </Col>
       <Col sm={6}>
-      <Card
-        style={{ position: 'relative' }}
-      >
-      <Page
-        setDimensions={setDimensions}
-        page={currentPage}
-      />
-
-      { dimensions && (
-        <Attachments
-          pdfName={name}
-          removeAttachment={remove}
-          updateAttachment={update}
-          pageDimensions={dimensions}
-          attachments={pageAttachments}
-        />
-      )}
-
-      </Card>
+        { currentPage && (
+          <Card
+            style={{
+              display: 'table', // for look more compact
+            }}
+          >
+            <div
+              style={{ position: 'relative' }}
+            >
+              <Page
+                dimensions={dimensions}
+                setDimensions={setDimensions}
+                page={currentPage}
+              />
+              { dimensions && (
+                <Attachments
+                  pdfName={name}
+                  removeAttachment={remove}
+                  updateAttachment={update}
+                  pageDimensions={dimensions}
+                  attachments={pageAttachments}
+                />
+              )}
+            </div>
+          </Card>
+        )}
       </Col>
           <Col sm={3}>
             {isMultiPage && !isLastPage && (

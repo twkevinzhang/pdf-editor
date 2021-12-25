@@ -11,8 +11,6 @@ interface Props {
   height: number;
   lineHeight?: number;
   fontFamily?: string;
-  initY: number;
-  initX: number;
   onDoubleClick: () => void;
   onStop?: DraggableEventHandler;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,34 +24,28 @@ export const Text: React.FC<Props> = ({
   editing,
   size,
   fontFamily,
-  initY,
-  initX,
   onChangeText,
-                                        onDoubleClick,
+  onDoubleClick,
   onStop,
   lineHeight,
 }) => {
   return (
-    <div
-      onDoubleClick={onDoubleClick}
-      style={{
-        position: 'absolute',
-      }}
-    >
       <Draggable
-        defaultPosition={{x: initX, y: initY}}
         onStop={onStop}>
         <div
+          onDoubleClick={onDoubleClick}
           style={{
             width,
-            border: 1,
-            fontFamily,
-            fontSize: size,
-            lineHeight,
-            borderColor: 'gray',
-            borderStyle: 'solid',
-            wordWrap: 'break-word',
-            padding: 0,
+            border: '1px solid gray',
+            height,
+            fontFamily: 'Times-Roman',
+            fontSize: '16px',
+            lineHeight: '1.4',
+            top: '0px',
+            left: '0px',
+            overflowWrap: 'break-word',
+            padding: '0px',
+            position: 'absolute',
           }}
         >
           <input
@@ -80,6 +72,5 @@ export const Text: React.FC<Props> = ({
           />
         </div>
       </Draggable>
-    </div>
   );
 };

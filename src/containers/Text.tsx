@@ -12,8 +12,6 @@ interface Props {
 }
 
 export const Text = ({
-   x,
-   y,
    text,
    width,
    height,
@@ -77,9 +75,7 @@ export const Text = ({
       lineHeight={lineHeight}
       inputRef={inputRef}
       fontFamily={fontFamily}
-      initY={y}
       onChangeText={onChangeText}
-      initX={x}
       onDoubleClick={onDoubleClick}
       onStop={onStop}
     />

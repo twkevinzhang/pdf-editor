@@ -1,15 +1,35 @@
-import React, { useReducer, useCallback, useState, useEffect } from 'react';
+import React, {
+  useReducer,
+  useCallback,
+  useState,
+  useEffect,
+  createRef,
+  RefObject,
+} from 'react';
 import { Pdf } from './usePdf';
 import { getMovePosition } from '../utils/helpers';
 
-export const useMouse = ({ onUp }: { onUp: (event: MouseEvent) => void }) => {
+export const useMouse = ({
+  ref,
+  onClick,
+}: {
+  ref: RefObject<any>;
+  onClick: (event: MouseEvent, mouseCover: boolean) => void;
+}) => {
   useEffect(() => {
-    window.removeEventListener('mouseup', handleMouseUp);
-    window.addEventListener('mouseup', handleMouseUp);
-  }, [onUp]);
+    const input = ref.current;
+    let mouseC = false;
+    if (input) {
+      input.addEventListener('mouseover', (e: MouseEvent) => {
+        mouseC = true;
+      });
+      input.addEventListener('mouseout', (e: MouseEvent) => {
+        mouseC = false;
+      });
+    }
 
-  const handleMouseUp = (event: MouseEvent) => {
-    onUp(event);
-    window.removeEventListener('mouseup', handleMouseUp);
-  };
+    window.addEventListener('mouseup', (e: MouseEvent) => {
+      if (onClick) onClick(e, mouseC);
+    });
+  }, []);
 };

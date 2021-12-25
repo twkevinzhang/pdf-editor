@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import { TextMode } from '../entities';
 import { Rnd, RndDragCallback } from 'react-rnd';
 
@@ -11,8 +11,9 @@ interface Props {
   height: number;
   lineHeight?: number;
   fontFamily?: string;
-  onDoubleClick: () => void;
+  onDoubleClick?: () => void;
   onDragStop?: RndDragCallback;
+  onDrag?: RndDragCallback;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -26,6 +27,7 @@ export const Text: React.FC<Props> = ({
   fontFamily,
   onChangeText,
   onDoubleClick,
+  onDrag,
   onDragStop,
   lineHeight,
 }) => {
@@ -39,6 +41,7 @@ export const Text: React.FC<Props> = ({
       }}
       onDragStop={onDragStop}
       enableResizing={false}
+      onDrag={onDrag}
     >
       <div
         onDoubleClick={onDoubleClick}

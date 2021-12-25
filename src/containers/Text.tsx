@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import { Text as Component } from '../components/Text';
 import { getMovePosition } from '../utils/helpers';
 import { DragActions, TextMode } from '../entities';
@@ -22,21 +22,31 @@ export const Text = ({
    pageWidth,
    updateTextAttachment,
            }: TextAttachment & Props) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = createRef<HTMLInputElement>();
   const [content, setContent] = useState(text || '');
   const [editing, setEditing] = useState(false);
 
-  const onStop =(e: DraggableEvent,  data: DraggableData) =>{
+  useMouse({ref: inputRef, onClick:(e:MouseEvent, mouseCover: boolean)=>{
+      if(!mouseCover){
+        setEditing(false)
+        document.getSelection()?.removeAllRanges();
+      }
+  }});
+
+  const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
     updateTextAttachment({
       x: data.x,
       y: data.y,
     });
   }
 
-  const prepareTextAndUpdate = () => {
-    // Deselect any selection when returning to command mode
-    document.getSelection()?.removeAllRanges();
+  function onDrag (e: DraggableEvent,  data: DraggableData) {
+    if(editing) setEditing(false);
+  }
 
+  const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value;
+    setContent(value);
     const lines = [content];
     updateTextAttachment({
       lines,
@@ -44,26 +54,14 @@ export const Text = ({
     });
   };
 
-  const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-    setContent(value);
-  };
-
   function onDoubleClick(){
-    const input = inputRef.current;
     setEditing(true)
+    const input = inputRef.current;
     if (input) {
       input.focus();
       input.select();
     }
   }
-
-  useMouse({onUp:()=>{
-      if(editing){
-        setEditing(false)
-        prepareTextAndUpdate();
-      }
-  }});
 
   return (
     <Component
@@ -77,7 +75,8 @@ export const Text = ({
       fontFamily={fontFamily}
       onChangeText={onChangeText}
       onDoubleClick={onDoubleClick}
-      onDragStop={onStop}
+      onDragStop={onDragStop}
+      onDrag={onDrag}
     />
   );
 };

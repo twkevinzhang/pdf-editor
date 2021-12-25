@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Image as Component } from '../components/Image';
 import { DraggableData, DraggableEvent } from 'react-draggable';
+import { ResizeDirection } from 're-resizable';
+import { Position, ResizableDelta } from 'react-rnd';
 
 const IMAGE_MAX_SIZE = 300;
 
@@ -23,13 +25,6 @@ export const Image = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasWidth, setCanvasWidth] = useState(width);
   const [canvasHeight, setCanvasHeight] = useState(height);
-
-  const onStop =(e: DraggableEvent,  data: DraggableData) =>{
-    updateImageAttachment({
-      x: data.x,
-      y: data.y,
-    });
-  }
 
   useEffect(() => {
     const renderImage = (img: HTMLImageElement) => {
@@ -74,9 +69,36 @@ export const Image = ({
     removeImage();
   };
 
+  const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
+    updateImageAttachment({
+      x: data.x,
+      y: data.y,
+    });
+  }
+
+  const onResizeStop =(e: MouseEvent | TouchEvent, dir: ResizeDirection, ref: HTMLElement, delta: ResizableDelta, position: Position) =>{
+    function strToInt(strPx: string): number{
+      const strInt= strPx.replace('px','')
+      const int= parseInt(strInt)
+      if(int){
+        return int
+      }else{
+        throw new Error(strPx+ " can't parse to int: " + int + "when parse "+ strInt)
+      }
+    }
+
+    updateImageAttachment({
+      x: position.x,
+      y: position.y,
+      width: strToInt(ref.style.width),
+      height: strToInt(ref.style.height),
+    });
+  }
+
   return (
     <Component
-      onStop={onStop}
+      onDragStop={onDragStop}
+      onResizeStop={onResizeStop}
       deleteImage={deleteImage}
       canvasRef={canvasRef}
       width={canvasWidth}

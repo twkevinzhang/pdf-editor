@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Image as Component } from '../components/Image';
-import { DraggableData, DraggableEvent } from 'react-draggable';
-import { ResizeDirection } from 're-resizable';
 import { Position, ResizableDelta } from 'react-rnd';
+import { DraggableData, DraggableEvent } from 'react-draggable';
+import { Direction } from 're-resizable/lib/resizer';
 
 const IMAGE_MAX_SIZE = 300;
 
@@ -76,7 +76,7 @@ export const Image = ({
     });
   }
 
-  const onResizeStop =(e: MouseEvent | TouchEvent, dir: ResizeDirection, ref: HTMLElement, delta: ResizableDelta, position: Position) =>{
+  const onResizeStop =(e: MouseEvent | TouchEvent, dir: Direction, ref: HTMLElement, delta: ResizableDelta, position: Position) =>{
     function strToInt(strPx: string): number{
       const strInt= strPx.replace('px','')
       const int= parseInt(strInt)

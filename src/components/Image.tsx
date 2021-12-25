@@ -1,7 +1,4 @@
 import React, { RefObject } from 'react';
-import Draggable, { DraggableEventHandler } from 'react-draggable';
-import { Resizable, ResizableBox, ResizeCallbackData } from 'react-resizable';
-import 'react-resizable/css/styles.css'
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
 
 interface Props {

@@ -77,7 +77,7 @@ export const Text = ({
       fontFamily={fontFamily}
       onChangeText={onChangeText}
       onDoubleClick={onDoubleClick}
-      onStop={onStop}
+      onDragStop={onStop}
     />
   );
 };

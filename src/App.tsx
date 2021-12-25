@@ -10,6 +10,7 @@ import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
 import { ggID } from './utils/helpers';
 import { Attachments } from './components/Attachments';
+import { useImageUploader } from './hooks/useImageUploader';
 
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
@@ -23,9 +24,13 @@ const App: React.FC<{}> = () => {
         },
     });
 
+  const { inputRef: imgRef, uploading: imgUploading, handleClick: handleImgClick, fileOnChange: imgOnChange } = useImageUploader({
+    afterUploadAttachment: addAttachment,
+  });
+
   useEffect(() => setPageIndex(pageIndex), [pageIndex, setPageIndex]);
 
-  const handleTextImage = () => {
+  const handleText = () => {
     const newTextAttachment: TextAttachment = {
       id: ggID(),
       type: AttachmentTypes.TEXT,
@@ -46,11 +51,16 @@ const App: React.FC<{}> = () => {
       <input
         ref={inputRef}
         type="file"
-        name="pdf"
-        id="pdf"
         accept="application/pdf"
         onChange={fileOnChange}
         style={{ display: 'none' }}
+      />
+      <input
+        ref={imgRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={imgOnChange}
       />
     </>
   )
@@ -62,7 +72,8 @@ const App: React.FC<{}> = () => {
         style={{ margin: 30 }}
       >
       <Button onClick={handleClick}>upload</Button>
-      <Button onClick={handleTextImage}>add text</Button>
+      <Button onClick={handleText}>add text</Button>
+      <Button onClick={handleImgClick}>add image</Button>
       <Button onClick={async ()=> {
         await savePdf(allPageAttachments);
       }}>save</Button>

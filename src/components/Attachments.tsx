@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { AttachmentTypes } from '../entities';
 import { Text } from '../containers/Text';
+import { Image } from '../containers/Image';
 
 interface Props {
   attachments: Attachment[];
@@ -24,15 +25,29 @@ export const Attachments: React.FC<Props> = ({
   return (<>
       {attachments?.map((attachment, index) => {
         const key = `${pdfName}-${index}`;
-        return (
-          <Text
-            key={key}
-            pageWidth={pageDimensions.width}
-            pageHeight={pageDimensions.height}
-            updateTextAttachment={handleAttachmentUpdate(index)}
-            {...(attachment as TextAttachment)}
-          />
-        );
+
+        if (attachment.type === AttachmentTypes.IMAGE) {
+          return (
+            <Image
+              key={key}
+              pageWidth={pageDimensions.width}
+              pageHeight={pageDimensions.height}
+              removeImage={() => removeAttachment(index)}
+              updateImageAttachment={handleAttachmentUpdate(index)}
+              {...(attachment as ImageAttachment)}
+            />
+          );
+        }else{
+          return (
+            <Text
+              key={key}
+              pageWidth={pageDimensions.width}
+              pageHeight={pageDimensions.height}
+              updateTextAttachment={handleAttachmentUpdate(index)}
+              {...(attachment as TextAttachment)}
+            />
+          )
+        }
       })}
     </>)
 };

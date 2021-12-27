@@ -3,6 +3,8 @@ import { TextMode } from '../entities';
 import { Rnd, RndDragCallback } from 'react-rnd';
 
 interface Props {
+  x: number,
+  y: number,
   inputRef: RefObject<HTMLInputElement>;
   text?: string;
   editing: boolean;
@@ -18,6 +20,8 @@ interface Props {
 }
 
 export const Text: React.FC<Props> = ({
+  x,
+  y,
   text,
   width,
   height,
@@ -34,8 +38,8 @@ export const Text: React.FC<Props> = ({
   return (
     <Rnd
       default={{
-        x: 0,
-        y: 0,
+        x: x,
+        y: y,
         width: width,
         height: height,
       }}

@@ -12,6 +12,8 @@ interface Props {
 }
 
 export const Text = ({
+  x,
+  y,
    text,
    width,
    height,
@@ -65,6 +67,8 @@ export const Text = ({
 
   return (
     <Component
+      x={x}
+      y={y}
       text={content}
       width={width}
       height={height}

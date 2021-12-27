@@ -2,6 +2,8 @@ import React, { RefObject } from 'react';
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
 
 interface Props {
+  x:number,
+  y:number,
   deleteImage: () => void;
   width: number;
   height: number;
@@ -11,6 +13,8 @@ interface Props {
 }
 
 export const Image: React.FC<Props> = ({
+  x,
+  y,
   canvasRef,
   width,
   height,
@@ -20,8 +24,8 @@ export const Image: React.FC<Props> = ({
   return (
     <Rnd
       default={{
-        x: 0,
-        y: 0,
+        x: x,
+        y: y,
         width: width,
         height: height,
       }}

@@ -14,6 +14,8 @@ interface Props {
 }
 
 export const Image = ({
+  x,
+  y,
   img,
   width,
   height,
@@ -97,6 +99,8 @@ export const Image = ({
 
   return (
     <Component
+      x={x}
+      y={y}
       onDragStop={onDragStop}
       onResizeStop={onResizeStop}
       deleteImage={deleteImage}

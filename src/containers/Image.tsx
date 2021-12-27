@@ -67,10 +67,6 @@ export const Image = ({
     renderImage(img);
   }, [img]);
 
-  const deleteImage = () => {
-    removeImage();
-  };
-
   const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
     updateImageAttachment({
       x: data.x,
@@ -103,7 +99,7 @@ export const Image = ({
       y={y}
       onDragStop={onDragStop}
       onResizeStop={onResizeStop}
-      deleteImage={deleteImage}
+      deleteImage={removeImage}
       canvasRef={canvasRef}
       width={canvasWidth}
       height={canvasHeight}

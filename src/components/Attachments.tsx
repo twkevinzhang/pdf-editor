@@ -7,7 +7,7 @@ interface Props {
   attachments: Attachment[];
   pdfName: string;
   pageDimensions: Dimensions;
-  removeAttachment: (index: number) => void;
+  removeAttachment: (id: string) => void;
   updateAttachment: (index: number, attachment: Partial<Attachment>) => void;
 }
 
@@ -24,7 +24,7 @@ export const Attachments: React.FC<Props> = ({
 
   return (<>
       {attachments?.map((attachment, index) => {
-        const key = `${pdfName}-${index}`;
+        const key = attachment.id;
 
         if (attachment.type === AttachmentTypes.IMAGE) {
           return (
@@ -32,7 +32,7 @@ export const Attachments: React.FC<Props> = ({
               key={key}
               pageWidth={pageDimensions.width}
               pageHeight={pageDimensions.height}
-              removeImage={() => removeAttachment(index)}
+              removeImage={() => removeAttachment(attachment.id)}
               updateImageAttachment={handleAttachmentUpdate(index)}
               {...(attachment as ImageAttachment)}
             />
@@ -43,7 +43,7 @@ export const Attachments: React.FC<Props> = ({
               key={key}
               pageWidth={pageDimensions.width}
               pageHeight={pageDimensions.height}
-              removeText={() => removeAttachment(index)}
+              removeText={() => removeAttachment(attachment.id)}
               updateTextAttachment={handleAttachmentUpdate(index)}
               {...(attachment as TextAttachment)}
             />

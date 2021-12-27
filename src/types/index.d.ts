@@ -12,7 +12,7 @@ declare interface Window {
 type AttachmentType = 'image' | 'text';
 
 interface AttachmentBase {
-  id: () => number;
+  id: string;
   width: number;
   height: number;
   x: number;

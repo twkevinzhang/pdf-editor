@@ -17,7 +17,7 @@ interface State {
 type Action =
   | { type: ActionType.UPDATE_PAGE_INDEX; pageIndex: number }
   | { type: ActionType.ADD_ATTACHMENT; attachment: Attachment }
-  | { type: ActionType.REMOVE_ATTACHMENT; attachmentIndex: number }
+  | { type: ActionType.REMOVE_ATTACHMENT; id: string }
   | {
       type: ActionType.UPDATE_ATTACHMENT;
       attachmentIndex: number;
@@ -53,10 +53,7 @@ const reducer = (state: State, action: Action) => {
       const newAllPageAttachmentsRemove = allPageAttachments.map(
         (otherPageAttachments, index) =>
           pageIndex === index
-            ? pageAttachments.filter(
-                (_, _attachmentIndex) =>
-                  _attachmentIndex !== action.attachmentIndex
-              )
+            ? pageAttachments.filter((a) => a.id !== action.id)
             : otherPageAttachments
       );
 
@@ -119,8 +116,8 @@ export const useAttachments = () => {
       dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }),
     reset: (numberOfPages: number) =>
       dispatch({ type: ActionType.RESET, numberOfPages }),
-    remove: (attachmentIndex: number) =>
-      dispatch({ type: ActionType.REMOVE_ATTACHMENT, attachmentIndex }),
+    remove: (id: string) =>
+      dispatch({ type: ActionType.REMOVE_ATTACHMENT, id }),
     update: (attachmentIndex: number, attachment: Partial<Attachment>) =>
       dispatch({
         type: ActionType.UPDATE_ATTACHMENT,

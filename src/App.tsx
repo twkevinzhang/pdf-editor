@@ -11,6 +11,7 @@ import { AttachmentTypes } from './entities';
 import { ggID } from './utils/helpers';
 import { Attachments } from './components/Attachments';
 import { useImageUploader } from './hooks/useImageUploader';
+import uuid from "uuid";
 
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
@@ -32,7 +33,7 @@ const App: React.FC<{}> = () => {
 
   const handleText = () => {
     const newTextAttachment: TextAttachment = {
-      id: ggID(),
+      id: uuid.v4(),
       type: AttachmentTypes.TEXT,
       x: 0,
       y: 0,

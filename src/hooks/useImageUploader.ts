@@ -3,6 +3,7 @@ import { readAsPDF, readAsDataURL, readAsImage } from '../utils/asyncReader';
 import { ggID } from '../utils/helpers';
 import { Pdf } from './usePdf';
 import { AttachmentTypes } from '../entities';
+import uuid from 'uuid';
 
 export const useImageUploader = ({
   afterUploadAttachment,
@@ -54,7 +55,7 @@ export const useImageUploader = ({
         try {
           const url = await readAsDataURL(file);
           const img = await readAsImage(url as string);
-          const id = ggID();
+          const id = uuid.v4();
           const { width, height } = img;
 
           const imageAttachemnt: ImageAttachment = {

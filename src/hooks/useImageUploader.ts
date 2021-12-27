@@ -17,8 +17,8 @@ export const useImageUploader = ({
     uploading,
     handleClick: () => {
       const input = inputRef.current;
-
       if (input) {
+        input.value = '';
         setUploading(true);
         input.click();
       }

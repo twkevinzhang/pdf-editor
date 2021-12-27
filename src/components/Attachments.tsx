@@ -43,6 +43,7 @@ export const Attachments: React.FC<Props> = ({
               key={key}
               pageWidth={pageDimensions.width}
               pageHeight={pageDimensions.height}
+              removeText={() => removeAttachment(index)}
               updateTextAttachment={handleAttachmentUpdate(index)}
               {...(attachment as TextAttachment)}
             />

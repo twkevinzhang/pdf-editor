@@ -8,6 +8,7 @@ import { useMouse } from '../hooks/useMouse';
 interface Props {
   pageWidth: number;
   pageHeight: number;
+  removeText: () => void;
   updateTextAttachment: (textObject: Partial<TextAttachment>) => void;
 }
 
@@ -22,6 +23,7 @@ export const Text = ({
    fontFamily,
    pageHeight,
    pageWidth,
+   removeText,
    updateTextAttachment,
            }: TextAttachment & Props) => {
   const inputRef = createRef<HTMLInputElement>();
@@ -31,9 +33,17 @@ export const Text = ({
   useMouse({ref: inputRef, onClick:(e:MouseEvent, mouseCover: boolean)=>{
       if(!mouseCover){
         setEditing(false)
-        document.getSelection()?.removeAllRanges();
       }
   }});
+
+  useEffect(()=>{
+    if(!editing){
+      document.getSelection()?.removeAllRanges();
+      if(content === ''){
+        removeText()
+      }
+    }
+  },[editing])
 
   const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
     updateTextAttachment({

@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import {usePdfUploader} from "./hooks/usePdfUploader";
 import {Pdf, usePdf} from "./hooks/usePdf";
-import { Container, Button, Row, Col, Card } from 'react-bootstrap';
+import { Container, Button, Row, Col, Card, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Page } from './components/Page';
 import { useAttachments } from './hooks/useAttachments';
@@ -15,10 +15,13 @@ import { Candidate } from './containers/Candidate';
 import { saveFile } from './utils/StorageService';
 import { useDrawer } from './hooks/useDrawer';
 
+import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from 'react-icons/bs';
+
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
   const { save, allAttachment, setAllAttachment } = useDrawer();
   const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
+  const isPdfLoaded = !!file
 
   const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
         after: (uploaded: Pdf)=>{
@@ -55,6 +58,8 @@ const App: React.FC<{}> = () => {
     addAttachment(attachment);
   }
 
+  const handleSave = () => savePdf(allPageAttachments)
+
   const hiddenInputs = (
     <>
       <input
@@ -77,20 +82,65 @@ const App: React.FC<{}> = () => {
     return (
     <div className="App">
       {hiddenInputs}
+
+      <Navbar bg="light" expand="lg">
+        <Container>
+          <Navbar.Brand href="#home">PDF-Editor</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav>
+
+            </Nav>
+          </Navbar.Collapse>
+          <Navbar.Toggle />
+          <Navbar.Collapse className='justify-content-between'>
+            <Nav>
+              {isMultiPage && !isFirstPage && (
+                <Button className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
+              )}
+            </Nav>
+            <div>
+              {isPdfLoaded && (
+                <>
+                  <Button onClick={handleText}><BsChatLeftText /></Button>{" "}
+                  <Button onClick={handleImgClick}><BsFillImageFill /></Button>
+                </>
+              )}
+            </div>
+            <Nav>
+              {isMultiPage && !isLastPage && (
+                <Button className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            <Nav>
+              {isPdfLoaded && (<>
+              <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
+              <Nav.Link onClick={handleSave}>Save</Nav.Link>
+              </>)}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
       <Container
         style={{ margin: 30 }}
       >
-      <Button onClick={handleClick}>upload</Button>
-      <Button onClick={handleText}>add text</Button>
-      <Button onClick={handleImgClick}>add image</Button>
-      <Button onClick={async ()=> {
-        await savePdf(allPageAttachments);
-      }}>save</Button>
-
       <div>
+        {!isPdfLoaded && (<>
+        <Row className='justify-content-center'>
+          <div>
+            <h3>上傳一份 Pdf！</h3>
+            <Button onClick={handleClick}>Upload</Button>
+          </div>
+        </Row>
+        </>)}
         <Row>
-          <Col sm={3}>
-            <h3>最近載入過圖片</h3>
+          <Col sm={4}>
+            {isPdfLoaded && (<>
+            <h3>插入一些圖片吧！</h3>
             <p>這些圖片被儲存在 local 的 IndexedDB</p>
             {allAttachment
               .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
@@ -102,49 +152,36 @@ const App: React.FC<{}> = () => {
                 />
               )
             }
+            </>)}
 
           </Col>
-          <Col sm={9}>
-            <Row>
-              <Col sm={1}>
-                {isMultiPage && !isFirstPage && (
-                  <Button onClick={previousPage} />
-                )}
-              </Col>
-              <Col sm={8}>
-                { currentPage && (
-                  <Card
-                    style={{
-                      display: 'table', // for look more compact
-                    }}
-                  >
-                    <div
-                      style={{ position: 'relative' }}
-                    >
-                      <Page
-                        dimensions={dimensions}
-                        setDimensions={setDimensions}
-                        page={currentPage}
-                      />
-                      { dimensions && (
-                        <Attachments
-                          pdfName={name}
-                          removeAttachment={remove}
-                          updateAttachment={update}
-                          pageDimensions={dimensions}
-                          attachments={pageAttachments}
-                        />
-                      )}
-                    </div>
-                  </Card>
-                )}
-              </Col>
-              <Col sm={1}>
-                {isMultiPage && !isLastPage && (
-                  <Button onClick={nextPage} />
-                )}
-              </Col>
-            </Row>
+          <Col sm={8}>
+            { currentPage && (
+              <Card
+                style={{
+                  display: 'table', // for look more compact
+                }}
+              >
+                <div
+                  style={{ position: 'relative' }}
+                >
+                  <Page
+                    dimensions={dimensions}
+                    setDimensions={setDimensions}
+                    page={currentPage}
+                  />
+                  { dimensions && (
+                    <Attachments
+                      pdfName={name}
+                      removeAttachment={remove}
+                      updateAttachment={update}
+                      pageDimensions={dimensions}
+                      attachments={pageAttachments}
+                    />
+                  )}
+                </div>
+              </Card>
+            )}
           </Col>
         </Row>
 

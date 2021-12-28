@@ -14,7 +14,7 @@ interface Props {
   addAttachment?: (attachment: Attachment) => void;
 }
 
-const IMAGE_MAX_SIZE = 150
+const IMAGE_MAX_SIZE = 120
 
 export const Candidate = (
   {
@@ -37,6 +37,8 @@ export const Candidate = (
         addAttachment(attachment)}
       }
       style={{
+        margin: '0.5rem',
+        float: 'left',
         width,
         height,
         cursor: 'pointer'

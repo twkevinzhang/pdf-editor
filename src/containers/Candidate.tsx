@@ -34,7 +34,10 @@ export const Candidate = (
     <div
       onClick={e=>{
         if(addAttachment)
-        addAttachment(attachment)}
+        addAttachment({
+          ...attachment,
+          id: uuid.v4()
+        })}
       }
       style={{
         margin: '0.5rem',

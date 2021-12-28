@@ -7,7 +7,6 @@ import React, {
   RefObject,
 } from 'react';
 import { Pdf } from './usePdf';
-import { getMovePosition } from '../utils/helpers';
 
 export const useMouse = ({
   ref,

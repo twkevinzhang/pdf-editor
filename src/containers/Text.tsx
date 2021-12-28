@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, createRef } from 'react';
 import { Text as Component } from '../components/Text';
-import { getMovePosition } from '../utils/helpers';
 import { DragActions, TextMode } from '../entities';
 import { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { useMouse } from '../hooks/useMouse';

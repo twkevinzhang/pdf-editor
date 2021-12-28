@@ -9,8 +9,8 @@ const IMAGE_MAX_SIZE = 300;
 interface Props {
   pageWidth: number;
   pageHeight: number;
-  removeImage: () => void;
-  updateImageAttachment: (imageObject: Partial<ImageAttachment>) => void;
+  removeImage?: () => void;
+  updateImageAttachment?: (imageObject: Partial<ImageAttachment>) => void;
 }
 
 export const Image = ({
@@ -56,6 +56,7 @@ export const Image = ({
 
       context.drawImage(img, 0, 0, newCanvasWidth, newCanvasHeight);
       canvas.toBlob((blob) => {
+        if(updateImageAttachment)
         updateImageAttachment({
           file: blob as File,
           width: newCanvasWidth,
@@ -68,6 +69,7 @@ export const Image = ({
   }, [img]);
 
   const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
+    if(updateImageAttachment)
     updateImageAttachment({
       x: data.x,
       y: data.y,
@@ -85,6 +87,7 @@ export const Image = ({
       }
     }
 
+    if(updateImageAttachment)
     updateImageAttachment({
       x: position.x,
       y: position.y,

@@ -12,9 +12,13 @@ import { ggID } from './utils/helpers';
 import { Attachments } from './components/Attachments';
 import { useImageUploader } from './hooks/useImageUploader';
 import uuid from "uuid";
+import { Candidate } from './containers/Candidate';
+import { saveFile } from './utils/StorageService';
+import { useDrawer } from './hooks/useDrawer';
 
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
+  const { save, allAttachment, setAllAttachment } = useDrawer();
   const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
 
   const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
@@ -26,7 +30,7 @@ const App: React.FC<{}> = () => {
     });
 
   const { inputRef: imgRef, uploading: imgUploading, handleClick: handleImgClick, fileOnChange: imgOnChange } = useImageUploader({
-    afterUploadAttachment: addAttachment,
+    afterUploadAttachment,
   });
 
   useEffect(() => setPageIndex(pageIndex), [pageIndex, setPageIndex]);
@@ -46,6 +50,11 @@ const App: React.FC<{}> = () => {
     };
     addAttachment(newTextAttachment);
   };
+
+  function afterUploadAttachment (attachment: ImageAttachment){
+    save(attachment).then()
+    addAttachment(attachment);
+  }
 
   const hiddenInputs = (
     <>
@@ -82,44 +91,55 @@ const App: React.FC<{}> = () => {
       <div>
         <Row>
           <Col sm={3}>
-            {isMultiPage && !isFirstPage && (
-              <Button onClick={previousPage} />
-            )}
+            {allAttachment.map(attachment=>{
+              return <Candidate {...(attachment as ImageAttachment)}/>
+            })}
+
           </Col>
-      <Col sm={6}>
-        { currentPage && (
-          <Card
-            style={{
-              display: 'table', // for look more compact
-            }}
-          >
-            <div
-              style={{ position: 'relative' }}
-            >
-              <Page
-                dimensions={dimensions}
-                setDimensions={setDimensions}
-                page={currentPage}
-              />
-              { dimensions && (
-                <Attachments
-                  pdfName={name}
-                  removeAttachment={remove}
-                  updateAttachment={update}
-                  pageDimensions={dimensions}
-                  attachments={pageAttachments}
-                />
-              )}
-            </div>
-          </Card>
-        )}
-      </Col>
-          <Col sm={3}>
-            {isMultiPage && !isLastPage && (
-              <Button onClick={nextPage} />
-            )}
+          <Col sm={9}>
+            <Row>
+              <Col sm={1}>
+                {isMultiPage && !isFirstPage && (
+                  <Button onClick={previousPage} />
+                )}
+              </Col>
+              <Col sm={8}>
+                { currentPage && (
+                  <Card
+                    style={{
+                      display: 'table', // for look more compact
+                    }}
+                  >
+                    <div
+                      style={{ position: 'relative' }}
+                    >
+                      <Page
+                        dimensions={dimensions}
+                        setDimensions={setDimensions}
+                        page={currentPage}
+                      />
+                      { dimensions && (
+                        <Attachments
+                          pdfName={name}
+                          removeAttachment={remove}
+                          updateAttachment={update}
+                          pageDimensions={dimensions}
+                          attachments={pageAttachments}
+                        />
+                      )}
+                    </div>
+                  </Card>
+                )}
+              </Col>
+              <Col sm={1}>
+                {isMultiPage && !isLastPage && (
+                  <Button onClick={nextPage} />
+                )}
+              </Col>
+            </Row>
           </Col>
-      </Row>
+        </Row>
+
       </div>
       </Container>
     </div>

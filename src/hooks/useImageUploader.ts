@@ -8,7 +8,7 @@ import uuid from 'uuid';
 export const useImageUploader = ({
   afterUploadAttachment,
 }: {
-  afterUploadAttachment?: (upload: Attachment) => void;
+  afterUploadAttachment?: (upload: ImageAttachment) => void;
 }) => {
   const [uploading, setUploading] = useState(false);
   const inputRef = createRef<HTMLInputElement>();
@@ -43,37 +43,39 @@ export const useImageUploader = ({
 
       const file = files[0];
 
-      const result = await handler(file);
+      const result = await fileToImageAttachment(file);
 
       if (afterUploadAttachment) {
         console.log('===> was this also called');
         afterUploadAttachment(result as ImageAttachment);
       }
       setUploading(false);
-
-      async function handler(file: File): Promise<ImageAttachment> {
-        try {
-          const url = await readAsDataURL(file);
-          const img = await readAsImage(url as string);
-          const id = uuid.v4();
-          const { width, height } = img;
-
-          const imageAttachemnt: ImageAttachment = {
-            id,
-            type: AttachmentTypes.IMAGE,
-            width,
-            height,
-            x: 0,
-            y: 0,
-            img,
-            file,
-          };
-          return imageAttachemnt;
-        } catch (error) {
-          console.log('Failed to load image', error);
-          throw new Error('Failed to load image');
-        }
-      }
     },
   };
 };
+
+export async function fileToImageAttachment(
+  file: File
+): Promise<ImageAttachment> {
+  try {
+    const url = await readAsDataURL(file);
+    const img = await readAsImage(url as string);
+    const id = uuid.v4();
+    const { width, height } = img;
+
+    const imageAttachemnt: ImageAttachment = {
+      id,
+      type: AttachmentTypes.IMAGE,
+      width,
+      height,
+      x: 0,
+      y: 0,
+      img,
+      file,
+    };
+    return imageAttachemnt;
+  } catch (error) {
+    console.log('Failed to load image', error);
+    throw new Error('Failed to load image');
+  }
+}

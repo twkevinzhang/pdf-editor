@@ -8,7 +8,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Page } from './components/Page';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
-import { ggID } from './utils/helpers';
 import { Attachments } from './components/Attachments';
 import { useImageUploader } from './hooks/useImageUploader';
 import uuid from "uuid";
@@ -91,7 +90,8 @@ const App: React.FC<{}> = () => {
       <div>
         <Row>
           <Col sm={3}>
-            <h3>最近上傳的圖片</h3>
+            <h3>最近載入過圖片</h3>
+            <p>這些圖片被儲存在 local 的 IndexedDB</p>
             {allAttachment
               .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
               .map(attachment=>

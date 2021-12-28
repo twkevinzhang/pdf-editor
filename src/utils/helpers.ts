@@ -55,5 +55,30 @@ export const getMovePosition = (
   };
 };
 
+export const scale = (
+  w: number,
+  h: number,
+  max: number,
+  scale: number
+): {
+  width: number;
+  height: number;
+} => {
+  if (w > max) {
+    scale = max / w;
+  }
+
+  if (h > max) {
+    scale = Math.min(scale, max / h);
+  }
+
+  const width = w * scale;
+  const height = h * scale;
+  return {
+    width,
+    height,
+  };
+};
+
 export const normalize = (value: number): number =>
   parseFloat((value / 255).toFixed(1));

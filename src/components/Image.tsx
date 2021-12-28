@@ -1,5 +1,6 @@
 import React, { RefObject, useEffect, useState } from 'react';
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
+import { scale } from '../utils/helpers';
 
 interface Props {
   canvasRef: RefObject<HTMLCanvasElement>;
@@ -28,18 +29,12 @@ export const Image: React.FC<Props> = (
       const context = canvas.getContext('2d');
       if (!context) return;
 
-      let scale = 1;
-      if (canvasWidth > IMAGE_MAX_SIZE) {
-        scale = IMAGE_MAX_SIZE / canvasWidth;
-      }
-
-      if (canvasHeight > IMAGE_MAX_SIZE) {
-        scale = Math.min(scale, IMAGE_MAX_SIZE / canvasHeight);
-      }
-
-      const newCanvasWidth = canvasWidth * scale;
-      const newCanvasHeight = canvasHeight * scale;
-
+      const {width: newCanvasWidth, height: newCanvasHeight } = scale(
+        canvasWidth,
+        canvasHeight,
+        IMAGE_MAX_SIZE,
+        1
+      )
       setCanvasWidth(newCanvasWidth);
       setCanvasHeight(newCanvasHeight);
 
@@ -47,14 +42,6 @@ export const Image: React.FC<Props> = (
       canvas.height = newCanvasHeight;
 
       context.drawImage(img, 0, 0, newCanvasWidth, newCanvasHeight);
-      // canvas.toBlob((blob) => {
-      //   if(updateImageAttachment)
-      //     updateImageAttachment({
-      //       file: blob as File,
-      //       width: newCanvasWidth,
-      //       height: newCanvasHeight,
-      //     });
-      // });
     };
 
     renderImage(img);

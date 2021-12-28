@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { AttachmentTypes } from '../entities';
 import { Text } from '../containers/Text';
-import { Image } from '../containers/Image';
+import { DraggableImage } from '../containers/DraggableImage';
 
 interface Props {
   attachments: Attachment[];
@@ -28,7 +28,7 @@ export const Attachments: React.FC<Props> = ({
 
         if (attachment.type === AttachmentTypes.IMAGE) {
           return (
-            <Image
+            <DraggableImage
               key={key}
               pageWidth={pageDimensions.width}
               pageHeight={pageDimensions.height}

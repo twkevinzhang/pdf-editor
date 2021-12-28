@@ -91,9 +91,17 @@ const App: React.FC<{}> = () => {
       <div>
         <Row>
           <Col sm={3}>
-            {allAttachment.map(attachment=>{
-              return <Candidate {...(attachment as ImageAttachment)}/>
-            })}
+            <h3>最近上傳的圖片</h3>
+            {allAttachment
+              .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
+              .map(attachment=>
+                <Candidate
+                  key={attachment.id}
+                  attachment={(attachment as ImageAttachment)}
+                  addAttachment={addAttachment}
+                />
+              )
+            }
 
           </Col>
           <Col sm={9}>

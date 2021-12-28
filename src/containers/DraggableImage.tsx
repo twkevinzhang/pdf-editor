@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Image as Component } from '../components/Image';
-import { Position, ResizableDelta } from 'react-rnd';
+import { Position, ResizableDelta, Rnd } from 'react-rnd';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Direction } from 're-resizable/lib/resizer';
 
-const IMAGE_MAX_SIZE = 300;
+
 
 interface Props {
   pageWidth: number;
@@ -13,7 +13,8 @@ interface Props {
   updateImageAttachment?: (imageObject: Partial<ImageAttachment>) => void;
 }
 
-export const Image = ({
+export const DraggableImage = ({
+  id,
   x,
   y,
   img,
@@ -25,48 +26,6 @@ export const Image = ({
   updateImageAttachment,
 }: ImageAttachment & Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [canvasWidth, setCanvasWidth] = useState(width);
-  const [canvasHeight, setCanvasHeight] = useState(height);
-
-  useEffect(() => {
-    const renderImage = (img: HTMLImageElement) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const context = canvas.getContext('2d');
-      if (!context) return;
-
-      let scale = 1;
-      if (canvasWidth > IMAGE_MAX_SIZE) {
-        scale = IMAGE_MAX_SIZE / canvasWidth;
-      }
-
-      if (canvasHeight > IMAGE_MAX_SIZE) {
-        scale = Math.min(scale, IMAGE_MAX_SIZE / canvasHeight);
-      }
-
-      const newCanvasWidth = canvasWidth * scale;
-      const newCanvasHeight = canvasHeight * scale;
-
-      setCanvasWidth(newCanvasWidth);
-      setCanvasHeight(newCanvasHeight);
-
-      canvas.width = newCanvasWidth;
-      canvas.height = newCanvasHeight;
-
-      context.drawImage(img, 0, 0, newCanvasWidth, newCanvasHeight);
-      canvas.toBlob((blob) => {
-        if(updateImageAttachment)
-        updateImageAttachment({
-          file: blob as File,
-          width: newCanvasWidth,
-          height: newCanvasHeight,
-        });
-      });
-    };
-
-    renderImage(img);
-  }, [img]);
 
   const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
     if(updateImageAttachment)
@@ -97,15 +56,48 @@ export const Image = ({
   }
 
   return (
-    <Component
-      x={x}
-      y={y}
+    <Rnd
+      default={{
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+      }}
+      minWidth={100}
+      minHeight={100}
+      bounds="window"
       onDragStop={onDragStop}
       onResizeStop={onResizeStop}
-      deleteImage={removeImage}
-      canvasRef={canvasRef}
-      width={canvasWidth}
-      height={canvasHeight}
-    />
+    >
+      {removeImage &&
+        <div
+          onClick={removeImage}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            width: '3rem',
+            height: '3rem',
+            cursor: 'pointer',
+            margin: 'auto',
+            borderRadius: '9999px',
+            transform: "translateX(0) translateY(-50%) rotate(0) skewX(0) skewY(0) scaleX(0.75) scaleY(0.75)",
+            backgroundColor: "white"
+          }}>
+          <img
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            src="./react-pdf-editor/delete.svg" alt="delete object" />
+        </div>
+      }
+      <Component
+        img={img}
+        canvasRef={canvasRef}
+        width={width}
+       height={height}/>
+    </Rnd>
   );
 };

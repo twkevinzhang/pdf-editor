@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { CSSProperties, RefObject, useEffect, useState } from 'react';
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
 import { scale } from '../utils/helpers';
 
@@ -7,6 +7,7 @@ interface Props {
   img: HTMLImageElement;
   width: number;
   height: number;
+  style?: CSSProperties
 }
 
 const IMAGE_MAX_SIZE = 300;
@@ -17,6 +18,7 @@ export const Image: React.FC<Props> = (
     width,
     height,
     img,
+    style,
 }: {} & Props) => {
   const [canvasWidth, setCanvasWidth] = useState(width);
   const [canvasHeight, setCanvasHeight] = useState(height);
@@ -53,6 +55,7 @@ export const Image: React.FC<Props> = (
       style={{
         width: '100%',
         height: '100%',
+        ...(style || {})
       }}
     />
 );

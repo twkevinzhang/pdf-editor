@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { Image as Component } from '../components/Image';
 import { Position, ResizableDelta, Rnd } from 'react-rnd';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Direction } from 're-resizable/lib/resizer';
+import { BsFillCircleFill, BsXCircleFill } from 'react-icons/all';
+import { Stone } from '../components/Stone';
 
 
 
@@ -26,8 +28,14 @@ export const DraggableImage = ({
   updateImageAttachment,
 }: ImageAttachment & Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [dragging, setDragging] = useState<boolean>(false)
+
+  const onDragStart = (e: DraggableEvent,  data: DraggableData) =>{
+    setDragging(true)
+  }
 
   const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
+    setDragging(false)
     if(updateImageAttachment)
     updateImageAttachment({
       x: data.x,
@@ -55,6 +63,100 @@ export const DraggableImage = ({
     });
   }
 
+  const deleteButton =
+    <Stone
+      position={{
+        left: 0,
+        top: 0,
+        right: 0,
+      }}
+      translateX={"0"}
+      translateY={"-50%"}
+      style={{
+        zIndex: "1000",
+        cursor: 'pointer',
+        backgroundColor: 'white',
+      }}
+    >
+      <BsXCircleFill
+        onClick={removeImage}
+        style={{
+          color:'rgb(245, 101, 101)',
+          width: "100%",
+          height: "100%",
+        }}/>
+    </Stone>
+
+  const stone =
+    <BsFillCircleFill
+      style={{
+        color:'#90cdf4',
+        width: "100%",
+        height: "100%",
+      }}
+    />
+
+  const leftTop =
+    <Stone
+      position={{
+        left: 0,
+        top: 0,
+      }}
+      translateX={"-50%"}
+      translateY={"-50%"}
+    >
+      {stone}
+    </Stone>
+
+  const rightTop =
+    <Stone
+      position={{
+        right: 0,
+        top: 0,
+      }}
+      translateX={"50%"}
+      translateY={"-50%"}
+    >
+      {stone}
+    </Stone>
+
+  const leftBottom =
+    <Stone
+      position={{
+        left: 0,
+        bottom: 0,
+      }}
+      translateX={"-50%"}
+      translateY={"50%"}
+    >
+      {stone}
+    </Stone>
+
+  const rightBottom =
+    <Stone
+      position={{
+        right: 0,
+        bottom: 0,
+      }}
+      translateX={"50%"}
+      translateY={"50%"}
+    >
+      {stone}
+    </Stone>
+
+  let imageStyle: CSSProperties = {
+    border:'0.3px dashed gray',
+  }
+  if(dragging){
+    imageStyle= {
+      ...imageStyle,
+      outline: `${width/2}px solid rgba(0, 0, 0, 0.3)`,
+      outlineOffset: `-${width/2}px`,
+      overflow: "hidden",
+      position: "relative",
+    }
+  }
+
   return (
     <Rnd
       default={{
@@ -66,38 +168,25 @@ export const DraggableImage = ({
       minWidth={100}
       minHeight={100}
       bounds="window"
+      onDragStart={onDragStart}
       onDragStop={onDragStop}
       onResizeStop={onResizeStop}
     >
-      {removeImage &&
-        <div
-          onClick={removeImage}
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            right: 0,
-            width: '3rem',
-            height: '3rem',
-            cursor: 'pointer',
-            margin: 'auto',
-            borderRadius: '9999px',
-            transform: "translateX(0) translateY(-50%) rotate(0) skewX(0) skewY(0) scaleX(0.75) scaleY(0.75)",
-            backgroundColor: "white"
-          }}>
-          <img
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-            src="./react-pdf-editor/delete.svg" alt="delete object" />
-        </div>
-      }
+      {!dragging && (
+        <>
+          {leftTop}
+          {removeImage && deleteButton}
+          {rightTop}
+          {leftBottom}
+          {rightBottom}
+        </>
+      )}
       <Component
+        style={imageStyle}
         img={img}
         canvasRef={canvasRef}
         width={width}
-       height={height}/>
+        height={height}/>
     </Rnd>
   );
 };

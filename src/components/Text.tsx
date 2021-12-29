@@ -1,10 +1,8 @@
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { CSSProperties, FocusEventHandler, RefObject, useEffect, useState } from 'react';
 import { TextMode } from '../entities';
 import { Rnd, RndDragCallback } from 'react-rnd';
 
 interface Props {
-  x: number,
-  y: number,
   inputRef: RefObject<HTMLInputElement>;
   text?: string;
   editing: boolean;
@@ -14,14 +12,12 @@ interface Props {
   lineHeight?: number;
   fontFamily?: string;
   onDoubleClick?: () => void;
-  onDragStop?: RndDragCallback;
-  onDrag?: RndDragCallback;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
   onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  style?: CSSProperties;
 }
 
 export const Text: React.FC<Props> = ({
-  x,
-  y,
   text,
   width,
   height,
@@ -31,36 +27,24 @@ export const Text: React.FC<Props> = ({
   fontFamily,
   onChangeText,
   onDoubleClick,
-  onDrag,
-  onDragStop,
   lineHeight,
+  style,
+  onBlur
 }) => {
   return (
-    <Rnd
-      default={{
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-      }}
-      onDragStop={onDragStop}
-      enableResizing={false}
-      onDrag={onDrag}
-    >
+
       <div
         onDoubleClick={onDoubleClick}
         style={{
-          border: '1px solid gray',
-          fontFamily: 'Times-Roman',
-          fontSize: '16px',
-          lineHeight: '1.4',
           overflowWrap: 'break-word',
           padding: '0px',
           position: 'absolute',
+          ...(style || {}),
         }}
       >
         <input
           type="text"
+          onBlur={onBlur}
           ref={inputRef}
           onChange={onChangeText}
           readOnly={!editing}
@@ -82,6 +66,5 @@ export const Text: React.FC<Props> = ({
           value={text}
         />
       </div>
-    </Rnd>
   );
 };

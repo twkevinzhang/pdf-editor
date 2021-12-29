@@ -1,41 +1,49 @@
 import React, { useState, useRef, useEffect, createRef, CSSProperties } from 'react';
-import { Text as Component } from '../components/Text';
 import { DragActions, TextMode } from '../entities';
 import { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable';
 import { Rnd } from 'react-rnd';
+import { Translate, useDraggable } from '@dnd-kit/core';
+import { Text } from '../components/Text';
 
 interface Props {
   pageWidth: number;
   pageHeight: number;
   removeText: () => void;
   updateTextAttachment: (textObject: Partial<TextAttachment>) => void;
+  translate: Translate;
+  size?: number,
+  lineHeight?: number,
+  fontFamily?: string,
 }
 
-export const DraggableText = ({
-  x,
-  y,
+export const DraggableText = (
+  {
+    id,
    text,
    width,
    height,
-   lineHeight,
-   size,
-   fontFamily,
    pageHeight,
    pageWidth,
    removeText,
    updateTextAttachment,
-           }: TextAttachment & Props) => {
-  const inputRef = createRef<HTMLInputElement>();
+    translate,
+    size,
+    lineHeight,
+    fontFamily,
+}: TextAttachment & Props) => {
   const [content, setContent] = useState(text || '');
   const [editing, setEditing] = useState(false);
-  const [dragging, setDragging] = useState(false);
+
+  const {attributes: draggableAttrs, node: inputRef, isDragging, listeners, setNodeRef} = useDraggable({
+    id,
+  });
 
   useEffect(()=>{
     if(editing){
       const input = inputRef.current;
       if (input) {
         input.focus();
-        input.select();
+        (input as HTMLInputElement).select();
       }
     }else{
       document.getSelection()?.removeAllRanges();
@@ -51,18 +59,6 @@ export const DraggableText = ({
     }
   },[editing])
 
-  const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
-    setDragging(false)
-    updateTextAttachment({
-      x: data.x,
-      y: data.y,
-    });
-  }
-
-  const onDragStart = (e: DraggableEvent,  data: DraggableData) =>{
-    setDragging(true)
-  }
-
   const onChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
     setContent(value);
@@ -76,57 +72,21 @@ export const DraggableText = ({
     setEditing(false)
   }
 
-  let textStyle : CSSProperties = {}
-  if(!dragging){
-    textStyle = {
-      border: '0.3px dashed gray',
-    }
-  }
-
-  const textComponent = <Component
+  return <Text
+    ref={setNodeRef}
+    dragging={isDragging}
+    listeners={listeners}
+    translate={translate}
     onBlur={onBlur}
     text={content}
+    size={size}
+    lineHeight= { lineHeight }
+    fontFamily={fontFamily}
     width={width}
     height={height}
     editing={editing}
-    size={size}
-    lineHeight={lineHeight}
-    inputRef={inputRef}
-    fontFamily={fontFamily}
     onChangeText={onChangeText}
     onDoubleClick={onDoubleClick}
-    style={textStyle}
+    draggableAttrs={draggableAttrs}
   />
-
-  let component = <></>
-  if(editing){
-    component = <div
-      style={{
-        position: 'absolute',
-        top: y,
-        left: x,
-        width,
-        height,
-      }}
-    >
-      {textComponent}
-    </div>
-  }else{
-    component = <Rnd
-      default={{
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-      }}
-      onDragStart={onDragStart}
-      onDragStop={onDragStop}
-      enableResizing={false}
-      enableUserSelectHack={false}
-    >
-      {textComponent}
-    </Rnd>
-  }
-
-  return component
 };

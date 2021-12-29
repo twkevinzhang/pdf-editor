@@ -20,7 +20,7 @@ type Action =
   | { type: ActionType.REMOVE_ATTACHMENT; id: string }
   | {
       type: ActionType.UPDATE_ATTACHMENT;
-      attachmentIndex: number;
+      id: string;
       attachment: Partial<Attachment>;
     }
   | { type: ActionType.RESET; numberOfPages: number };
@@ -71,10 +71,8 @@ const reducer = (state: State, action: Action) => {
       const newAllPageAttachmentsUpdate = allPageAttachments.map(
         (otherPageAttachments, index) =>
           pageIndex === index
-            ? pageAttachments.map((oldAttachment, _attachmentIndex) =>
-                _attachmentIndex === action.attachmentIndex
-                  ? { ...oldAttachment, ...action.attachment }
-                  : oldAttachment
+            ? pageAttachments.map((old) =>
+                old.id === action.id ? { ...old, ...action.attachment } : old
               )
             : otherPageAttachments
       );
@@ -112,16 +110,18 @@ export const useAttachments = () => {
   return {
     pageAttachments,
     allPageAttachments,
+    get: (id: string): Attachment | undefined =>
+      pageAttachments.find((a) => a.id === id),
     add: (newAttachment: Attachment) =>
       dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }),
     reset: (numberOfPages: number) =>
       dispatch({ type: ActionType.RESET, numberOfPages }),
     remove: (id: string) =>
       dispatch({ type: ActionType.REMOVE_ATTACHMENT, id }),
-    update: (attachmentIndex: number, attachment: Partial<Attachment>) =>
+    update: (id: string, attachment: Partial<Attachment>) =>
       dispatch({
         type: ActionType.UPDATE_ATTACHMENT,
-        attachmentIndex,
+        id,
         attachment,
       }),
     setPageIndex: useCallback(

@@ -20,7 +20,7 @@ import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from '
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
   const { save, allAttachment, setAllAttachment } = useDrawer();
-  const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
+  const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, get, setPageIndex } = useAttachments();
   const isPdfLoaded = !!file
 
   const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
@@ -182,7 +182,7 @@ const App: React.FC<{}> = () => {
                   />
                   { dimensions && (
                     <Attachments
-                      pdfName={name}
+                      getAttachment={get}
                       removeAttachment={remove}
                       updateAttachment={update}
                       pageDimensions={dimensions}

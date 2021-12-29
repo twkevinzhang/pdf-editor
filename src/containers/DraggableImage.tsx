@@ -172,10 +172,10 @@ export const DraggableImage = ({
       onDragStop={onDragStop}
       onResizeStop={onResizeStop}
     >
+      {removeImage && deleteButton}
       {!dragging && (
         <>
           {leftTop}
-          {removeImage && deleteButton}
           {rightTop}
           {leftBottom}
           {rightBottom}

@@ -165,8 +165,8 @@ export const DraggableImage = ({
         width: width,
         height: height,
       }}
-      minWidth={100}
-      minHeight={100}
+      minWidth={40}
+      minHeight={40}
       bounds="window"
       onDragStart={onDragStart}
       onDragStop={onDragStop}

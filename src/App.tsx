@@ -79,6 +79,20 @@ const App: React.FC<{}> = () => {
     </>
   )
 
+  let previousButtonStyle= {}
+  if(!isMultiPage || isFirstPage){
+    previousButtonStyle={
+      visibility:'hidden'
+    }
+  }
+
+  let nextPageStyle= {}
+  if(!isMultiPage || isLastPage){
+    nextPageStyle={
+      visibility:'hidden'
+    }
+  }
+
     return (
     <div className="App">
       {hiddenInputs}
@@ -95,9 +109,7 @@ const App: React.FC<{}> = () => {
           <Navbar.Toggle />
           <Navbar.Collapse className='justify-content-between'>
             <Nav>
-              {isMultiPage && !isFirstPage && (
-                <Button className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
-              )}
+              <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
             </Nav>
             <div>
               {isPdfLoaded && (
@@ -108,9 +120,7 @@ const App: React.FC<{}> = () => {
               )}
             </div>
             <Nav>
-              {isMultiPage && !isLastPage && (
-                <Button className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
-              )}
+              <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
             </Nav>
           </Navbar.Collapse>
           <Navbar.Toggle />

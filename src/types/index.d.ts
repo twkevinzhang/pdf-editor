@@ -18,6 +18,7 @@ interface AttachmentBase {
   x: number;
   y: number;
   type: AttachmentType;
+  column_id?: string;
 }
 interface ImageAttachment extends AttachmentBase {
   file: File;
@@ -49,5 +50,16 @@ interface Dimensions {
 type Attachment = ImageAttachment | DrawingAttachment | TextAttachment;
 
 type Attachments = Attachment[];
+
+interface Placement {
+  id: string;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  children?: string[];
+}
+
+type Placements = Placement[];
 
 type DragEventListener<T> = (e: React.MouseEvent<T>) => void;

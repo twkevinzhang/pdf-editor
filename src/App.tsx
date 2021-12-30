@@ -16,11 +16,12 @@ import { saveFile } from './utils/StorageService';
 import { useDrawer } from './hooks/useDrawer';
 
 import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from 'react-icons/bs';
+import { mockPlacements } from './models/MockPlacements';
 
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
   const { save, allAttachment, setAllAttachment } = useDrawer();
-  const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, get, setPageIndex } = useAttachments();
+  const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
   const isPdfLoaded = !!file
 
   const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
@@ -182,11 +183,11 @@ const App: React.FC<{}> = () => {
                   />
                   { dimensions && (
                     <Attachments
-                      getAttachment={get}
                       removeAttachment={remove}
                       updateAttachment={update}
                       pageDimensions={dimensions}
                       attachments={pageAttachments}
+                      placements={mockPlacements()}
                     />
                   )}
                 </div>

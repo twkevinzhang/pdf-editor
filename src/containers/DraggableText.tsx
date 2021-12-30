@@ -10,7 +10,7 @@ interface Props {
   pageHeight: number;
   removeText: () => void;
   updateTextAttachment: (textObject: Partial<TextAttachment>) => void;
-  translate: Translate;
+  translate?: Translate;
   size?: number,
   lineHeight?: number,
   fontFamily?: string,

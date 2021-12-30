@@ -4,18 +4,17 @@ import type {DraggableSyntheticListeners, Translate} from '@dnd-kit/core';
 
 interface Props {
   border?: boolean;
-  dragOverlay?: boolean;
   dragging?: boolean;
   listeners?: DraggableSyntheticListeners;
   translate?: Translate;
   text?: string;
-  editing: boolean;
-  width: number;
-  height: number;
+  editing?: boolean;
+  width?: number;
+  height?: number;
   onDoubleClick?: () => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
-  onChangeText: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  draggableAttrs: object;
+  onChangeText?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  draggableAttrs?: object;
   size?: number;
   lineHeight?: number;
   fontFamily?: string;
@@ -24,13 +23,13 @@ interface Props {
 export const Text = forwardRef<HTMLInputElement, Props>((
     {
       border = true,
-      dragOverlay,
-      dragging,
+      dragging = false,
       listeners,
       translate,
       onBlur,
       onChangeText,
-      editing,
+      editing = false,
+      width,
       height,
       text,
       onDoubleClick,
@@ -47,7 +46,10 @@ export const Text = forwardRef<HTMLInputElement, Props>((
     borderColor: 'gray',
     borderStyle: editing? 'solid': 'dashed'
   }
-  if(dragging) borderStyle = {};
+  if(dragging) borderStyle = {
+    borderStyle: 'none',
+    borderWidth: 0,
+  };
 
   return (
       <div
@@ -69,10 +71,8 @@ export const Text = forwardRef<HTMLInputElement, Props>((
             fontSize: size,
             lineHeight,
             fontFamily,
-            width: '100%',
+            width: width || '100%',
             height,
-            borderStyle: 'none',
-            borderWidth: 0,
             outline: 'none',
             padding: 0,
             boxSizing: 'border-box',
@@ -82,8 +82,6 @@ export const Text = forwardRef<HTMLInputElement, Props>((
             ...borderStyle,
           }}
           value={text}
-          aria-label="Draggable"
-          data-cypress="draggable-item"
           {...(editing? {} : listeners)}
           {...(editing? {} : draggableAttrs)}
         />

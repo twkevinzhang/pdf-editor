@@ -110,8 +110,6 @@ export const useAttachments = () => {
   return {
     pageAttachments,
     allPageAttachments,
-    get: (id: string): Attachment | undefined =>
-      pageAttachments.find((a) => a.id === id),
     add: (newAttachment: Attachment) =>
       dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }),
     reset: (numberOfPages: number) =>

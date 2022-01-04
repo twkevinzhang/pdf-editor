@@ -5,63 +5,32 @@ import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Direction } from 're-resizable/lib/resizer';
 import { BsFillCircleFill, BsXCircleFill } from 'react-icons/all';
 import { Stone } from '../components/Stone';
-
-
+import { Translate, useDraggable } from '@dnd-kit/core';
 
 interface Props {
   pageWidth: number;
   pageHeight: number;
+  translate?: Translate;
   removeImage?: () => void;
   updateImageAttachment?: (imageObject: Partial<ImageAttachment>) => void;
+  hidden?: boolean;
 }
 
-export const DraggableImage = ({
+export const DraggableImage = (
+  {
   id,
-  x,
-  y,
   img,
   width,
   height,
   pageWidth,
   removeImage,
   pageHeight,
-  updateImageAttachment,
+    translate,
+    hidden=false,
 }: ImageAttachment & Props) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dragging, setDragging] = useState<boolean>(false)
-
-  const onDragStart = (e: DraggableEvent,  data: DraggableData) =>{
-    setDragging(true)
-  }
-
-  const onDragStop =(e: DraggableEvent,  data: DraggableData) =>{
-    setDragging(false)
-    if(updateImageAttachment)
-    updateImageAttachment({
-      x: data.x,
-      y: data.y,
-    });
-  }
-
-  const onResizeStop =(e: MouseEvent | TouchEvent, dir: Direction, ref: HTMLElement, delta: ResizableDelta, position: Position) =>{
-    function strToInt(strPx: string): number{
-      const strInt= strPx.replace('px','')
-      const int= parseInt(strInt)
-      if(int){
-        return int
-      }else{
-        throw new Error(strPx+ " can't parse to int: " + int + "when parse "+ strInt)
-      }
-    }
-
-    if(updateImageAttachment)
-    updateImageAttachment({
-      x: position.x,
-      y: position.y,
-      width: strToInt(ref.style.width),
-      height: strToInt(ref.style.height),
-    });
-  }
+  const {attributes: draggableAttrs, isDragging, listeners, setNodeRef} = useDraggable({
+    id,
+  });
 
   const deleteButton =
     <Stone
@@ -146,47 +115,35 @@ export const DraggableImage = ({
 
   let imageStyle: CSSProperties = {
     border:'0.3px dashed gray',
-  }
-  if(dragging){
-    imageStyle= {
-      ...imageStyle,
-      outline: `${width/2}px solid rgba(0, 0, 0, 0.3)`,
-      outlineOffset: `-${width/2}px`,
-      overflow: "hidden",
-      position: "relative",
-    }
+    cursor: 'move',
   }
 
+  const hiddenStyle: CSSProperties = hidden
+    ? {visibility: 'hidden',}
+    : {}
+
   return (
-    <Rnd
-      default={{
-        x: x,
-        y: y,
-        width: width,
-        height: height,
+    <div
+      style={{
+        position: "absolute",
+        'left': `${translate?.x ?? 0}px`,
+        'top': `${translate?.y ?? 0}px`,
+        ...hiddenStyle,
       }}
-      minWidth={40}
-      minHeight={40}
-      bounds="window"
-      onDragStart={onDragStart}
-      onDragStop={onDragStop}
-      onResizeStop={onResizeStop}
     >
       {removeImage && deleteButton}
-      {!dragging && (
-        <>
-          {leftTop}
-          {rightTop}
-          {leftBottom}
-          {rightBottom}
-        </>
-      )}
+      {leftTop}
+      {rightTop}
+      {leftBottom}
+      {rightBottom}
       <Component
+        ref={setNodeRef}
+        listeners={listeners}
+        draggableAttrs={draggableAttrs}
         style={imageStyle}
         img={img}
-        canvasRef={canvasRef}
         width={width}
         height={height}/>
-    </Rnd>
+    </div>
   );
 };

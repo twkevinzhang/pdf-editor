@@ -17,6 +17,5 @@ export const mockPlacements = (): Placement[] => {
       });
     }
   }
-  console.log(arr);
   return arr;
 };

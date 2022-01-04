@@ -15,6 +15,7 @@ import { DragEndEvent } from '@dnd-kit/core/dist/types';
 import { Droppable } from '../containers/Droppable';
 import { Text } from './Text';
 import { Placements } from './Placements';
+import { Image } from './Image';
 
 interface Props {
   placements: Placement[];
@@ -45,6 +46,8 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableImage
           key={key}
+          hidden={dragging === attachment.id}
+          translate={{x: attachment.x, y: attachment.y}}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
           removeImage={() => removeAttachment(attachment.id)}
@@ -85,10 +88,10 @@ export const Attachments: React.FC<Props> = (
   let attachment: Attachment | null = null
   if(isDragging){
     attachment = attachments.find(a=> a.id === dragging) || null
-    if(attachment as TextAttachment){
-      snapshot = <Text dragging={true} {...attachment} />
-    }else if(attachment as ImageAttachment) {
-
+    if(attachment?.type === AttachmentTypes.TEXT){
+      snapshot = <Text dragging={true} {...attachment as TextAttachment} />
+    }else if(attachment?.type === AttachmentTypes.IMAGE) {
+      snapshot = <Image {...attachment as ImageAttachment} />
     }
   }
   return (

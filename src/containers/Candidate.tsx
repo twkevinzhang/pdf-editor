@@ -21,8 +21,6 @@ export const Candidate = (
     attachment,
     addAttachment,
 }: Props) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const {width, height } = scale(
     attachment.width,
     attachment.height,
@@ -42,14 +40,13 @@ export const Candidate = (
       style={{
         margin: '0.5rem',
         float: 'left',
-        width,
-        height,
         cursor: 'pointer'
       }}
     >
     <Image
       {...attachment}
-      canvasRef={canvasRef}
+      width={width}
+      height={height}
     />
     </div>
   )

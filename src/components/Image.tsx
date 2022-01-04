@@ -1,62 +1,46 @@
-import React, { CSSProperties, RefObject, useEffect, useState } from 'react';
+import React, { createRef, CSSProperties, forwardRef, MutableRefObject, RefObject, useEffect, useState } from 'react';
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
 import { scale } from '../utils/helpers';
+import { DraggableSyntheticListeners, Translate } from '@dnd-kit/core';
 
 interface Props {
-  canvasRef: RefObject<HTMLCanvasElement>;
   img: HTMLImageElement;
   width: number;
   height: number;
-  style?: CSSProperties
+  style?: CSSProperties,
+  listeners?: DraggableSyntheticListeners;
+  draggableAttrs?: object;
+  desc?: string;
 }
 
-const IMAGE_MAX_SIZE = 300;
-
-export const Image: React.FC<Props> = (
+export const Image = forwardRef<HTMLImageElement, Props>((
   {
-  canvasRef,
     width,
     height,
     img,
     style,
-}: {} & Props) => {
-  const [canvasWidth, setCanvasWidth] = useState(width);
-  const [canvasHeight, setCanvasHeight] = useState(height);
-
-  useEffect(() => {
-    const renderImage = (img: HTMLImageElement) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const context = canvas.getContext('2d');
-      if (!context) return;
-
-      const {width: newCanvasWidth, height: newCanvasHeight } = scale(
-        canvasWidth,
-        canvasHeight,
-        IMAGE_MAX_SIZE,
-        1
-      )
-      setCanvasWidth(newCanvasWidth);
-      setCanvasHeight(newCanvasHeight);
-
-      canvas.width = newCanvasWidth;
-      canvas.height = newCanvasHeight;
-
-      context.drawImage(img, 0, 0, newCanvasWidth, newCanvasHeight);
-    };
-
-    renderImage(img);
-  }, [img]);
+    listeners,
+    draggableAttrs,
+    desc,
+  },
+  ref
+)=> {
 
   return (
-    <canvas
-      ref={canvasRef}
+    <img
       style={{
-        width: '100%',
-        height: '100%',
-        ...(style || {})
+        width: width+"px" ,
+        height: height+"px",
+        cursor: 'move',
+        ...style,
       }}
+      src={img.src}
+      ref={ref}
+      {...listeners}
+      {...draggableAttrs}
+      alt={desc}
     />
+  );
+  }
 );
-};
+

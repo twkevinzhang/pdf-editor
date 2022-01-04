@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { AttachmentTypes } from '../entities';
 import { DraggableText } from '../containers/DraggableText';
 import { DraggableImage } from '../containers/DraggableImage';
@@ -34,6 +34,7 @@ export const Attachments: React.FC<Props> = (
 }) => {
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
   const [dragging, setDragging] = useState<string>('');
+  const isDragging = !!dragging.length
 
   const handleAttachmentUpdate = (id: string) => (
     attachment: Partial<Attachment>
@@ -55,6 +56,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableText
           key={key}
+          hidden={isDragging}
           translate={{x: attachment.x, y: attachment.y}}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
@@ -81,7 +83,7 @@ export const Attachments: React.FC<Props> = (
 
   let snapshot : ReactNode = null
   let attachment: Attachment | null = null
-  if(dragging.length){
+  if(isDragging){
     attachment = attachments.find(a=> a.id === dragging) || null
     if(attachment as TextAttachment){
       snapshot = <Text dragging={true} {...attachment} />

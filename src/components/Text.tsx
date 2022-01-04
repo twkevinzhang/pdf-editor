@@ -17,6 +17,7 @@ interface Props {
   size?: number;
   lineHeight?: number;
   fontFamily?: string;
+  style?: CSSProperties;
 }
 
 export const Text = forwardRef<HTMLInputElement, Props>((
@@ -35,6 +36,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
       size,
       lineHeight,
       fontFamily,
+      style,
     },
     ref
   )=> {
@@ -69,6 +71,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
             backgroundColor: 'transparent',
             cursor: editing ? 'text': 'move' ,
             ...borderStyle,
+            ...style,
           }}
           value={text}
           {...(editing? {} : listeners)}

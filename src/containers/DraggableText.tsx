@@ -16,6 +16,7 @@ interface Props {
   size?: number,
   lineHeight?: number,
   fontFamily?: string,
+  hidden?: boolean,
 }
 
 export const DraggableText = (
@@ -32,6 +33,7 @@ export const DraggableText = (
     size,
     lineHeight,
     fontFamily,
+    hidden = false,
 }: TextAttachment & Props) => {
   const [content, setContent] = useState(text || '');
   const [editing, setEditing] = useState(false);
@@ -96,12 +98,17 @@ export const DraggableText = (
         }}/>
     </Stone>
 
+  const hiddenStyle: CSSProperties = hidden
+    ? {visibility: 'hidden',}
+    : {}
+
   return (
     <div
       style={{
         position: "absolute",
         'left': `${translate?.x ?? 0}px`,
         'top': `${translate?.y ?? 0}px`,
+        ...hiddenStyle
       }}
     >
       {editButton}
@@ -120,6 +127,7 @@ export const DraggableText = (
         editing={editing}
         onChangeText={onChangeText}
         draggableAttrs={draggableAttrs}
+        style={hiddenStyle}
       />
     </div>
   )

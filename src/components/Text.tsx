@@ -11,7 +11,6 @@ interface Props {
   editing?: boolean;
   width?: number;
   height?: number;
-  onDoubleClick?: () => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChangeText?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   draggableAttrs?: object;
@@ -32,7 +31,6 @@ export const Text = forwardRef<HTMLInputElement, Props>((
       width,
       height,
       text,
-      onDoubleClick,
       draggableAttrs,
       size,
       lineHeight,
@@ -52,15 +50,6 @@ export const Text = forwardRef<HTMLInputElement, Props>((
   };
 
   return (
-      <div
-        style={{
-          position: "absolute",
-          'left': `${translate?.x ?? 0}px`,
-          'top': `${translate?.y ?? 0}px`,
-        }}
-        onDoubleClick={onDoubleClick}
-      >
-
         <input
           type="text"
           onBlur={onBlur}
@@ -85,7 +74,6 @@ export const Text = forwardRef<HTMLInputElement, Props>((
           {...(editing? {} : listeners)}
           {...(editing? {} : draggableAttrs)}
         />
-      </div>
     );
   }
 );

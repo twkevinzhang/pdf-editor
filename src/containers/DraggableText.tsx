@@ -4,6 +4,8 @@ import { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-drag
 import { Rnd } from 'react-rnd';
 import { Translate, useDraggable } from '@dnd-kit/core';
 import { Text } from '../components/Text';
+import { Stone } from '../components/Stone';
+import { BsPencil, BsXCircleFill } from 'react-icons/all';
 
 interface Props {
   pageWidth: number;
@@ -64,7 +66,7 @@ export const DraggableText = (
     setContent(value);
   };
 
-  function onDoubleClick(){
+  function onEdit(){
     setEditing(true)
   }
 
@@ -72,21 +74,53 @@ export const DraggableText = (
     setEditing(false)
   }
 
-  return <Text
-    ref={setNodeRef}
-    dragging={isDragging}
-    listeners={listeners}
-    translate={translate}
-    onBlur={onBlur}
-    text={content}
-    size={size}
-    lineHeight= { lineHeight }
-    fontFamily={fontFamily}
-    width={width}
-    height={height}
-    editing={editing}
-    onChangeText={onChangeText}
-    onDoubleClick={onDoubleClick}
-    draggableAttrs={draggableAttrs}
-  />
+  const editButton =
+    <Stone
+      position={{
+        top: 0,
+        right: 0,
+      }}
+      translateX={"50%"}
+      translateY={"-50%"}
+      style={{
+        cursor: 'pointer',
+        backgroundColor: '#1eb99d',
+      }}
+    >
+      <BsPencil
+        onClick={onEdit}
+        style={{
+          color:'white',
+          width: "100%",
+          height: "100%",
+        }}/>
+    </Stone>
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        'left': `${translate?.x ?? 0}px`,
+        'top': `${translate?.y ?? 0}px`,
+      }}
+    >
+      {editButton}
+      <Text
+        ref={setNodeRef}
+        dragging={isDragging}
+        listeners={listeners}
+        translate={translate}
+        onBlur={onBlur}
+        text={content}
+        size={size}
+        lineHeight= { lineHeight }
+        fontFamily={fontFamily}
+        width={width}
+        height={height}
+        editing={editing}
+        onChangeText={onChangeText}
+        draggableAttrs={draggableAttrs}
+      />
+    </div>
+  )
 };

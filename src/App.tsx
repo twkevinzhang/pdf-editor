@@ -98,48 +98,50 @@ const App: React.FC<{}> = () => {
     <div className="App">
       {hiddenInputs}
 
-      <Navbar bg="light" expand="lg">
-        <Container>
-          <Navbar.Brand href="#home">PDF-Editor</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav>
-
-            </Nav>
-          </Navbar.Collapse>
-          <Navbar.Toggle />
-          <Navbar.Collapse className='justify-content-between'>
-            <Nav>
-              <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
-            </Nav>
-            <div>
-              {isPdfLoaded && (
-                <>
-                  <Button onClick={handleText}><BsChatLeftText /></Button>{" "}
-                  <Button onClick={handleImgClick}><BsFillImageFill /></Button>
-                </>
-              )}
-            </div>
-            <Nav>
-              <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
-            </Nav>
-          </Navbar.Collapse>
-          <Navbar.Toggle />
-          <Navbar.Collapse className="justify-content-end">
+      <Container>
+        <Row style={{
+          padding: '10px'
+        }}>
+          <Col xs={2}>
+            <Navbar.Brand href="#home" style={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}>PDF-Editor</Navbar.Brand>
+          </Col>
+          <Col xs={8}>
+            <Row>
+              <Col>
+                <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
+              </Col>
+              <Col xs={8}>
+                {isPdfLoaded && (
+                  <>
+                    <Button onClick={handleText}><BsChatLeftText /></Button>{" "}
+                    <Button onClick={handleImgClick}><BsFillImageFill /></Button>
+                  </>
+                )}
+              </Col>
+              <Col>
+                <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
+              </Col>
+            </Row>
+          </Col>
+          <Col>
             <Nav>
               {isPdfLoaded && (<>
-              <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
-              <Nav.Link onClick={handleSave}>Save</Nav.Link>
+                <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
+                <Nav.Link onClick={handleSave}>Save</Nav.Link>
               </>)}
             </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+          </Col>
+        </Row>
 
-      <Container
-        style={{ margin: 30 }}
-      >
-      <div>
+      </Container>
+
+      <Container fluid>
+      <div style={{
+        marginTop: '10px'
+      }}>
         {!isPdfLoaded && (<>
         <Row className='justify-content-center'>
           <div>

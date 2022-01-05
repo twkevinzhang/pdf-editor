@@ -3,17 +3,14 @@ import classNames from 'classnames';
 import type {DraggableSyntheticListeners, Translate} from '@dnd-kit/core';
 
 interface Props {
-  border?: boolean;
-  dragging?: boolean;
   listeners?: DraggableSyntheticListeners;
-  translate?: Translate;
+  draggableAttrs?: object;
   text?: string;
   editing?: boolean;
   width?: number;
   height?: number;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChangeText?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  draggableAttrs?: object;
   size?: number;
   lineHeight?: number;
   fontFamily?: string;
@@ -22,17 +19,14 @@ interface Props {
 
 export const Text = forwardRef<HTMLInputElement, Props>((
     {
-      border = true,
-      dragging = false,
       listeners,
-      translate,
+      draggableAttrs,
       onBlur,
       onChangeText,
       editing = false,
       width,
       height,
       text,
-      draggableAttrs,
       size,
       lineHeight,
       fontFamily,
@@ -40,16 +34,10 @@ export const Text = forwardRef<HTMLInputElement, Props>((
     },
     ref
   )=> {
-
-  let borderStyle: CSSProperties = {
-    borderWidth: '0.3px',
-    borderColor: 'gray',
-    borderStyle: editing? 'solid': 'dashed'
+  const dragAttrs = {
+    ...listeners,
+    ...draggableAttrs,
   }
-  if(dragging) borderStyle = {
-    borderStyle: 'none',
-    borderWidth: 0,
-  };
 
   return (
         <input
@@ -66,16 +54,14 @@ export const Text = forwardRef<HTMLInputElement, Props>((
             height,
             outline: 'none',
             padding: 0,
-            boxSizing: 'border-box',
             margin: 0,
-            backgroundColor: 'transparent',
             cursor: editing ? 'text': 'move' ,
-            ...borderStyle,
+            border: 'unset',
+            backgroundColor: 'unset',
             ...style,
           }}
           value={text}
-          {...(editing? {} : listeners)}
-          {...(editing? {} : draggableAttrs)}
+          {...(editing? {} : dragAttrs)}
         />
     );
   }

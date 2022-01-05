@@ -173,9 +173,6 @@ const App: React.FC<{}> = () => {
                   display: 'table', // for look more compact
                 }}
               >
-                <div
-                  style={{ position: 'relative' }}
-                >
                   <Page
                     dimensions={dimensions}
                     setDimensions={setDimensions}
@@ -190,7 +187,6 @@ const App: React.FC<{}> = () => {
                       placements={mockPlacements()}
                     />
                   )}
-                </div>
               </Card>
             )}
           </Col>

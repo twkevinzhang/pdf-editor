@@ -59,7 +59,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableText
           key={key}
-          hidden={isDragging}
+          hidden={dragging === attachment.id}
           translate={{x: attachment.x, y: attachment.y}}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
@@ -89,7 +89,7 @@ export const Attachments: React.FC<Props> = (
   if(isDragging){
     attachment = attachments.find(a=> a.id === dragging) || null
     if(attachment?.type === AttachmentTypes.TEXT){
-      snapshot = <Text dragging={true} {...attachment as TextAttachment} />
+      snapshot = <Text {...attachment as TextAttachment} />
     }else if(attachment?.type === AttachmentTypes.IMAGE) {
       snapshot = <Image {...attachment as ImageAttachment} />
     }

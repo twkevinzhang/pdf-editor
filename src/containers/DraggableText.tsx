@@ -98,6 +98,12 @@ export const DraggableText = (
         }}/>
     </Stone>
 
+  let textStyle: CSSProperties = {
+    borderWidth: '0.3px',
+    borderColor: 'gray',
+    borderStyle: editing? 'solid': 'dashed',
+  }
+
   const hiddenStyle: CSSProperties = hidden
     ? {visibility: 'hidden',}
     : {}
@@ -111,12 +117,11 @@ export const DraggableText = (
         ...hiddenStyle
       }}
     >
-      {editButton}
+      {editing? null : editButton}
       <Text
         ref={setNodeRef}
-        dragging={isDragging}
         listeners={listeners}
-        translate={translate}
+        draggableAttrs={draggableAttrs}
         onBlur={onBlur}
         text={content}
         size={size}
@@ -126,8 +131,7 @@ export const DraggableText = (
         height={height}
         editing={editing}
         onChangeText={onChangeText}
-        draggableAttrs={draggableAttrs}
-        style={hiddenStyle}
+        style={textStyle}
       />
     </div>
   )

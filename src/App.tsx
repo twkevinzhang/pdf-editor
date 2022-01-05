@@ -17,6 +17,7 @@ import { useDrawer } from './hooks/useDrawer';
 
 import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
+import { Scene } from './containers/Scene';
 
 const App: React.FC<{}> = () => {
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
@@ -151,7 +152,7 @@ const App: React.FC<{}> = () => {
         </Row>
         </>)}
         <Row>
-          <Col sm={4}>
+          <Col sm={3}>
             {isPdfLoaded && (<>
             <h3>插入一些圖片吧！</h3>
             <p>這些圖片被儲存在 local 的 IndexedDB</p>
@@ -168,28 +169,23 @@ const App: React.FC<{}> = () => {
             </>)}
 
           </Col>
-          <Col sm={8}>
+          <Col sm={9}>
             { currentPage && (
-              <Card
-                style={{
-                  display: 'table', // for look more compact
-                }}
-              >
-                  <Page
-                    dimensions={dimensions}
-                    setDimensions={setDimensions}
-                    page={currentPage}
+              <Scene
+                currentPage={currentPage}
+                dimensions={dimensions}
+                setDimensions={setDimensions}
+                >
+                { dimensions && (
+                  <Attachments
+                    removeAttachment={remove}
+                    updateAttachment={update}
+                    pageDimensions={dimensions}
+                    attachments={pageAttachments}
+                    placements={mockPlacements()}
                   />
-                  { dimensions && (
-                    <Attachments
-                      removeAttachment={remove}
-                      updateAttachment={update}
-                      pageDimensions={dimensions}
-                      attachments={pageAttachments}
-                      placements={mockPlacements()}
-                    />
-                  )}
-              </Card>
+                )}
+              </Scene>
             )}
           </Col>
         </Row>

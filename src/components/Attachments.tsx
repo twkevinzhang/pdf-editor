@@ -17,6 +17,7 @@ import { Text } from './Text';
 import { Placements } from './Placements';
 import { Image } from './Image';
 import { scale } from '../utils/helpers';
+import { createPortal } from 'react-dom';
 
 interface Props {
   placements: Placement[];
@@ -35,9 +36,26 @@ export const Attachments: React.FC<Props> = (
     removeAttachment,
   updateAttachment,
 }) => {
+  console.log('rerender')
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
-  const [dragging, setDragging] = useState<string>('');
-  const isDragging = !!dragging.length
+  const [draggingAttach, setDraggingAttach] = useState<Attachment | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [snapshot, setSnapshot] = useState<ReactNode | null>(null);
+
+  useEffect(()=>{
+      if(draggingId){
+        const attachment = attachments.find(a=> a.id === draggingId) || null
+        let snapshot : ReactNode = null
+        if(attachment?.type === AttachmentTypes.TEXT){
+          snapshot = <Text {...attachment as TextAttachment} />
+        }else if(attachment?.type === AttachmentTypes.IMAGE) {
+          snapshot = <Image {...attachment as ImageAttachment} {...getAttachmentScaledSize(attachment)} />
+        }
+        setDraggingAttach(attachment)
+        setSnapshot(snapshot)
+      }
+    }
+    , [draggingId])
 
   const handleAttachmentUpdate = (id: string) => (
     attachment: Partial<Attachment>
@@ -57,7 +75,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableImage
           key={key}
-          hidden={dragging === attachment.id}
+          hidden={draggingId === attachment.id}
           translate={{x: attachment.x, y: attachment.y}}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
@@ -71,7 +89,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableText
           key={key}
-          hidden={dragging === attachment.id}
+          hidden={draggingId === attachment.id}
           translate={{x: attachment.x, y: attachment.y}}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
@@ -83,33 +101,10 @@ export const Attachments: React.FC<Props> = (
     }
   }
 
-  function getAttachmentsJsx(attachments: Attachment[]) {
-    const result = attachments.map(a => {
-      const key = a.id;
-      return getAttachmentJsx(a, key)
-    })
-
-    if(!result.length){
-      return null
-    }else{
-      return result
-    }
-  }
-
-  let snapshot : ReactNode = null
-  let attachment: Attachment | null = null
-  if(isDragging){
-    attachment = attachments.find(a=> a.id === dragging) || null
-    if(attachment?.type === AttachmentTypes.TEXT){
-      snapshot = <Text {...attachment as TextAttachment} />
-    }else if(attachment?.type === AttachmentTypes.IMAGE) {
-      snapshot = <Image {...attachment as ImageAttachment} {...getAttachmentScaledSize(attachment)} />
-    }
-  }
   return (
     <DndContext
       onDragStart={event => {
-        setDragging(event.active.id)
+        setDraggingId(event.active.id)
         setInitialWindowScroll({
           x: window.scrollX,
           y: window.scrollY,
@@ -117,28 +112,30 @@ export const Attachments: React.FC<Props> = (
       }}
       onDragEnd={event => {
         updateAttachment(event.active.id, {
-          x: event.delta.x + (attachment?.x || 0)  - initialWindowScroll.x,
-          y: event.delta.y + (attachment?.y || 0)  - initialWindowScroll.y,
+          x: event.delta.x + (draggingAttach?.x || 0)  - initialWindowScroll.x,
+          y: event.delta.y + (draggingAttach?.y || 0)  - initialWindowScroll.y,
           column_id: event.over?.id
         })
-        setDragging('')
-        setInitialWindowScroll(defaultCoordinates);
+        setDraggingId('')
       }}
-      onDragCancel={() => setDragging('')}
+      onDragCancel={() => setDraggingId('')}
     >
-
-      {/* 有欄位的 */}
       <Placements
         placements={placements}
         attachments={attachments}
       />
 
-      {/* 沒有欄位，只有絕對位置的 */}
-      {getAttachmentsJsx(attachments)}
+      {attachments.map(a => {
+        const key = a.id;
+        return getAttachmentJsx(a, key)
+      })}
 
-      <DragOverlay>
-        {snapshot}
-      </DragOverlay>
+      {createPortal(
+        <DragOverlay>
+          {snapshot}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   )
 };

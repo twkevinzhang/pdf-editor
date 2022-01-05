@@ -40,13 +40,15 @@ export const Candidate = (
       style={{
         margin: '0.5rem',
         float: 'left',
-        cursor: 'pointer'
       }}
     >
     <Image
       {...attachment}
       width={width}
       height={height}
+      style={{
+        cursor: 'pointer'
+      }}
     />
     </div>
   )

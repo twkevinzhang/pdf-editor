@@ -23,8 +23,6 @@ export const DraggableText = (
   {
     id,
    text,
-   width,
-   height,
    pageHeight,
    pageWidth,
    removeText,
@@ -127,8 +125,6 @@ export const DraggableText = (
         size={size}
         lineHeight= { lineHeight }
         fontFamily={fontFamily}
-        width={width}
-        height={height}
         editing={editing}
         onChangeText={onChangeText}
         style={textStyle}

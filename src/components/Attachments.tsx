@@ -16,6 +16,7 @@ import { Droppable } from '../containers/Droppable';
 import { Text } from './Text';
 import { Placements } from './Placements';
 import { Image } from './Image';
+import { scale } from '../utils/helpers';
 
 interface Props {
   placements: Placement[];
@@ -25,6 +26,7 @@ interface Props {
   updateAttachment: (id: string, attachment: Partial<Attachment>) => void;
 }
 
+const IMAGE_MAX_SIZE = 80;
 export const Attachments: React.FC<Props> = (
   {
     placements,
@@ -41,6 +43,15 @@ export const Attachments: React.FC<Props> = (
     attachment: Partial<Attachment>
   ) => updateAttachment(id, attachment );
 
+  function getAttachmentScaledSize(attachment: Attachment){
+    return scale(
+      attachment.width,
+      attachment.height,
+      IMAGE_MAX_SIZE,
+      1
+    )
+  }
+
   function getAttachmentJsx(attachment: Attachment, key?: string,){
     if (attachment.type === AttachmentTypes.IMAGE) {
       return (
@@ -53,6 +64,7 @@ export const Attachments: React.FC<Props> = (
           removeImage={() => removeAttachment(attachment.id)}
           updateImageAttachment={handleAttachmentUpdate(attachment.id)}
           {...(attachment as ImageAttachment)}
+          {...getAttachmentScaledSize(attachment)}
         />
       );
     }else{
@@ -91,7 +103,7 @@ export const Attachments: React.FC<Props> = (
     if(attachment?.type === AttachmentTypes.TEXT){
       snapshot = <Text {...attachment as TextAttachment} />
     }else if(attachment?.type === AttachmentTypes.IMAGE) {
-      snapshot = <Image {...attachment as ImageAttachment} />
+      snapshot = <Image {...attachment as ImageAttachment} {...getAttachmentScaledSize(attachment)} />
     }
   }
   return (

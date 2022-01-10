@@ -11,7 +11,7 @@ import { AttachmentTypes } from './entities';
 import { Attachments as PageAttachments } from './components/Attachments';
 import { useImageUploader } from './hooks/useImageUploader';
 import uuid from "uuid";
-import { Candidate } from './containers/Candidate';
+import { CandidateImage } from './containers/CandidateImage';
 import { saveFile } from './utils/StorageService';
 import { useDrawer } from './hooks/useDrawer';
 
@@ -19,6 +19,9 @@ import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from '
 import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
 import { scaleTo } from './utils/helpers';
+import { Image } from './components/Image';
+import { Candidate } from './containers/Candidate';
+import { CandidateText } from './containers/CandidateText';
 
 const IMAGE_MAX_SIZE = 80;
 const App: React.FC<{}> = () => {
@@ -175,52 +178,12 @@ const App: React.FC<{}> = () => {
     <div className="App">
       {hiddenInputs}
 
-      <Container>
-        <Row style={{
-          padding: '10px'
-        }}>
-          <Col xs={2}>
-            <Navbar.Brand href="#home" style={{
-              display: 'flex',
-              justifyContent: 'center',
-            }}>PDF-Editor</Navbar.Brand>
-          </Col>
-          <Col xs={8}>
-            <Row>
-              <Col>
-                <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
-              </Col>
-              <Col xs={8}>
-                {isPdfLoaded && (
-                  <>
-                    <Button onClick={handleText}><BsChatLeftText /></Button>{" "}
-                    <Button onClick={handleImgClick}><BsFillImageFill /></Button>
-                  </>
-                )}
-              </Col>
-              <Col>
-                <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
-              </Col>
-            </Row>
-          </Col>
-          <Col>
-            <Nav>
-              {isPdfLoaded && (<>
-                <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
-                <Nav.Link onClick={handleSave}>Save</Nav.Link>
-              </>)}
-            </Nav>
-          </Col>
-        </Row>
-
-      </Container>
-
       <Container fluid>
       <div style={{
         marginTop: '10px'
       }}>
         {!isPdfLoaded && (<>
-        <Row className='justify-content-center'>
+        <Row className='justify-content-center mt-lg-5'>
           <div>
             <h3>上傳一份 Pdf！</h3>
             <Button onClick={handleClick}>Upload</Button>
@@ -230,22 +193,45 @@ const App: React.FC<{}> = () => {
         <Row>
           <Col sm={3}>
             {isPdfLoaded && (<>
-            <h3>插入一些圖片吧！</h3>
-            <p>這些圖片被儲存在 local 的 IndexedDB</p>
-            {allAttachment
-              .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
-              .map(attachment=>
-                <Candidate
-                  key={attachment.id}
-                  attachment={(attachment as ImageAttachment)}
-                  addAttachment={addScaledAttachment}
-                />
-              )
-            }
+              <h3>加入附件</h3>
+              <p>這些圖片被儲存在 local 的 IndexedDB</p>
+              <CandidateText scale={scale} onClick={handleText}>
+                新增文字
+              </CandidateText>
+              {allAttachment
+                .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
+                .map(attachment=>{
+                  return <CandidateImage
+                    key={attachment.id}
+                    attachment={attachment as ImageAttachment}
+                    addAttachment={addScaledAttachment}
+                    scale={scale}
+                  />
+                })
+              }
+              <CandidateText scale={scale} onClick={handleImgClick}>
+                上傳圖片
+              </CandidateText>
             </>)}
-
           </Col>
           <Col sm={9}>
+            <div className="pt-2 pb-2 d-flex justify-content-between" style={{
+              width: dimensions?.width || 0,
+            }}>
+              <div>
+                <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
+              </div>
+              <div>
+                {isPdfLoaded && (<Nav className="justify-content-center">
+                  <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
+                  <Nav.Link onClick={handleSave}>Save</Nav.Link>
+                </Nav>)}
+              </div>
+
+              <div>
+                <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
+              </div>
+            </div>
             { currentPage && (
               <Scene
                 currentPage={currentPage}

@@ -15,7 +15,10 @@ import { CandidateImage } from './containers/CandidateImage';
 import { saveFile } from './utils/StorageService';
 import { useDrawer } from './hooks/useDrawer';
 
-import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from 'react-icons/bs';
+import {
+  BsChevronLeft,
+  BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill,
+} from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
 import { scaleTo } from './utils/helpers';
@@ -186,7 +189,7 @@ const App: React.FC<{}> = () => {
         <Row className='justify-content-center mt-lg-5'>
           <div>
             <h3>上傳一份 Pdf！</h3>
-            <Button onClick={handleClick}>Upload</Button>
+            <Button onClick={handleClick}><BsFillCloudUploadFill /> Upload</Button>
           </div>
         </Row>
         </>)}
@@ -223,8 +226,8 @@ const App: React.FC<{}> = () => {
               </div>
               <div>
                 {isPdfLoaded && (<Nav className="justify-content-center">
-                  <Nav.Link onClick={handleClick}>Upload New</Nav.Link>
-                  <Nav.Link onClick={handleSave}>Save</Nav.Link>
+                  <Nav.Link onClick={handleClick}><BsFillCloudUploadFill /> Upload New</Nav.Link>
+                  <Nav.Link onClick={handleSave}><BsFillCloudDownloadFill /> Save </Nav.Link>
                 </Nav>)}
               </div>
 

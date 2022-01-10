@@ -1,6 +1,6 @@
 import React, { createRef, CSSProperties, forwardRef, MutableRefObject, RefObject, useEffect, useState } from 'react';
 import { Rnd, RndDragCallback, RndResizeCallback } from 'react-rnd';
-import { scale } from '../utils/helpers';
+import { scaleTo } from '../utils/helpers';
 import { DraggableSyntheticListeners, Translate } from '@dnd-kit/core';
 
 interface Props {

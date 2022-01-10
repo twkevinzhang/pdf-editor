@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {usePdfUploader} from "./hooks/usePdfUploader";
@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Page } from './components/Page';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
-import { Attachments } from './components/Attachments';
+import { Attachments as PageAttachments } from './components/Attachments';
 import { useImageUploader } from './hooks/useImageUploader';
 import uuid from "uuid";
 import { Candidate } from './containers/Candidate';
@@ -18,8 +18,11 @@ import { useDrawer } from './hooks/useDrawer';
 import { BsChatLeftText, BsChevronLeft, BsChevronRight, BsFillImageFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
+import { scaleTo } from './utils/helpers';
 
+const IMAGE_MAX_SIZE = 80;
 const App: React.FC<{}> = () => {
+  const [ scale, setScale ] = useState(1.65);
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
   const { save, allAttachment, setAllAttachment } = useDrawer();
   const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
@@ -52,15 +55,88 @@ const App: React.FC<{}> = () => {
       fontFamily: 'Times-Roman',
       text: 'Enter Text Here',
     };
-    addAttachment(newTextAttachment);
+    addScaledAttachment(newTextAttachment)
+  };
+
+  const addScaledAttachment = (attachment: Attachment) => {
+    addAttachment(getScaledAttachment(attachment));
   };
 
   function afterUploadAttachment (attachment: ImageAttachment){
     save(attachment).then()
-    addAttachment(attachment);
+    addScaledAttachment(attachment)
   }
 
-  const handleSave = () => savePdf(allPageAttachments)
+  function getScaledAttachment(attachment: Attachment):Attachment{
+    if(attachment.type === AttachmentTypes.TEXT){
+      attachment= getScaledText(attachment as TextAttachment)
+    }else if(attachment.type === AttachmentTypes.IMAGE){
+      attachment=  getScaledImage(attachment as ImageAttachment)
+    }
+   return attachment;
+  }
+
+  function getScaledText(attachment: TextAttachment): TextAttachment{
+    return {
+      ...attachment,
+      x: attachment.x * scale,
+      y: attachment.y * scale,
+      width: attachment.width * scale,
+      height: attachment.height * scale,
+      size: attachment.size? attachment.size * scale : undefined,
+    }
+  }
+
+  function getScaledImage(attachment: ImageAttachment): ImageAttachment{
+    const { width, height } = scaleTo(
+      attachment.width,
+      attachment.height,
+      IMAGE_MAX_SIZE,
+    )
+    return {
+      ...attachment,
+      x: attachment.x * scale,
+      y: attachment.y * scale,
+      width: width * scale,
+      height: height * scale,
+    }
+  }
+
+  function getUnscaledAllPageAttachments(_allPageAttachments: Attachments[]):Attachments[]{
+    return _allPageAttachments.map(_pageAttachments => _pageAttachments.map(_allAttachment => getUnscaledAttachment(_allAttachment)))
+  }
+
+  function getUnscaledAttachment(attachment: Attachment):Attachment{
+    if(attachment.type === AttachmentTypes.TEXT){
+      attachment= getUnscaledText(attachment as TextAttachment)
+    }else if(attachment.type === AttachmentTypes.IMAGE){
+      attachment=  getUnscaledImage(attachment as ImageAttachment)
+    }
+    return attachment;
+  }
+
+  function getUnscaledText(attachment: TextAttachment): TextAttachment{
+    return {
+      ...attachment,
+      x: attachment.x / scale,
+      y: attachment.y / scale,
+      width: attachment.width / scale,
+      height: attachment.height / scale,
+      size: attachment.size ? attachment.size / scale : undefined ,
+    }
+  }
+
+  function getUnscaledImage(attachment: ImageAttachment): ImageAttachment{
+    return {
+      ...attachment,
+      x: attachment.x / scale,
+      y: attachment.y / scale,
+      width: attachment.width / scale,
+      height:attachment. height / scale,
+    }
+  }
+
+  const handleSave = () => savePdf(getUnscaledAllPageAttachments(allPageAttachments))
 
   const hiddenInputs = (
     <>
@@ -162,7 +238,7 @@ const App: React.FC<{}> = () => {
                 <Candidate
                   key={attachment.id}
                   attachment={(attachment as ImageAttachment)}
-                  addAttachment={addAttachment}
+                  addAttachment={addScaledAttachment}
                 />
               )
             }
@@ -175,14 +251,16 @@ const App: React.FC<{}> = () => {
                 currentPage={currentPage}
                 dimensions={dimensions}
                 setDimensions={setDimensions}
+                scale={scale}
                 >
                 { dimensions && (
-                  <Attachments
+                  <PageAttachments
                     removeAttachment={remove}
                     updateAttachment={update}
                     pageDimensions={dimensions}
                     attachments={pageAttachments}
                     placements={mockPlacements()}
+                    scale={scale}
                   />
                 )}
               </Scene>

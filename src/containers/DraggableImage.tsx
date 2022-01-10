@@ -10,10 +10,11 @@ import { Translate, useDraggable } from '@dnd-kit/core';
 interface Props {
   pageWidth: number;
   pageHeight: number;
-  translate?: Translate;
   removeImage?: () => void;
   updateImageAttachment?: (imageObject: Partial<ImageAttachment>) => void;
   hidden?: boolean;
+  x:number;
+  y:number;
 }
 
 export const DraggableImage = (
@@ -25,8 +26,9 @@ export const DraggableImage = (
   pageWidth,
   removeImage,
   pageHeight,
-    translate,
     hidden=false,
+    x,
+    y,
 }: ImageAttachment & Props) => {
   const {attributes: draggableAttrs, isDragging, listeners, setNodeRef} = useDraggable({
     id,
@@ -126,8 +128,8 @@ export const DraggableImage = (
     <div
       style={{
         position: "absolute",
-        'left': `${translate?.x ?? 0}px`,
-        'top': `${translate?.y ?? 0}px`,
+        'left': `${x ?? 0}px`,
+        'top': `${y ?? 0}px`,
         ...hiddenStyle,
       }}
     >

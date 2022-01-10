@@ -12,11 +12,12 @@ interface Props {
   pageHeight: number;
   removeText: () => void;
   updateTextAttachment: (textObject: Partial<TextAttachment>) => void;
-  translate?: Translate;
   size?: number,
   lineHeight?: number,
   fontFamily?: string,
   hidden?: boolean,
+  x:number;
+  y:number;
 }
 
 export const DraggableText = (
@@ -27,11 +28,12 @@ export const DraggableText = (
    pageWidth,
    removeText,
    updateTextAttachment,
-    translate,
     size,
     lineHeight,
     fontFamily,
     hidden = false,
+    x,
+    y,
 }: TextAttachment & Props) => {
   const [content, setContent] = useState(text || '');
   const [editing, setEditing] = useState(false);
@@ -110,8 +112,8 @@ export const DraggableText = (
     <div
       style={{
         position: "absolute",
-        'left': `${translate?.x ?? 0}px`,
-        'top': `${translate?.y ?? 0}px`,
+        'left': `${x ?? 0}px`,
+        'top': `${y ?? 0}px`,
         ...hiddenStyle
       }}
     >

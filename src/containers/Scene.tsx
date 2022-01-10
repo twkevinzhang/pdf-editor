@@ -10,11 +10,12 @@ interface Props {
   dimensions?: Dimensions;
   setDimensions?: ({ width, height }: Dimensions) => void;
   children?: React.ReactNode | null;
+  scale?:number;
 }
 
 export const Scene = (
   {
-    currentPage, dimensions, setDimensions ,children
+    currentPage, dimensions, setDimensions ,children, scale
   }: Props) => {
   return (
       <Card
@@ -26,6 +27,7 @@ export const Scene = (
           dimensions={dimensions}
           setDimensions={setDimensions}
           page={currentPage}
+          scale={scale}
         />
         {children}
       </Card>

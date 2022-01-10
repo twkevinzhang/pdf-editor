@@ -1,12 +1,12 @@
-export const scale = (
+export const scaleTo = (
   w: number,
   h: number,
-  max: number,
-  scale: number
+  max: number
 ): {
   width: number;
   height: number;
 } => {
+  let scale = 1;
   if (w > max) {
     scale = max / w;
   }

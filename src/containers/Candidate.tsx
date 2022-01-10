@@ -7,7 +7,7 @@ import { DraggableImage } from './DraggableImage';
 import { readAsDataURL, readAsImage } from '../utils/asyncReader';
 import uuid from 'uuid';
 import { AttachmentTypes } from '../entities';
-import { scale } from '../utils/helpers';
+import { scaleTo } from '../utils/helpers';
 
 interface Props {
   attachment: ImageAttachment
@@ -21,11 +21,10 @@ export const Candidate = (
     attachment,
     addAttachment,
 }: Props) => {
-  const {width, height } = scale(
+  const {width, height } = scaleTo(
     attachment.width,
     attachment.height,
     IMAGE_MAX_SIZE,
-    1
   )
 
   return (

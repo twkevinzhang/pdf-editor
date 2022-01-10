@@ -4,9 +4,10 @@ interface Props {
   page: any;
   dimensions?: Dimensions;
   setDimensions?: ({ width, height }: Dimensions) => void;
+  scale?:number;
 }
 
-export const Page = ({ page, dimensions, setDimensions }: Props) => {
+export const Page = ({ page, dimensions, setDimensions, scale=1 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(dimensions?.width || 0);
   const [height, setHeight] = useState(dimensions?.height || 0);
@@ -18,7 +19,7 @@ export const Page = ({ page, dimensions, setDimensions }: Props) => {
       const canvas = canvasRef.current
       if (_page) {
         const context = canvas?.getContext('2d');
-        const viewport = _page.getViewport({ scale: 1 });
+        const viewport = _page.getViewport({ scale });
 
         setWidth(viewport.width);
         setHeight(viewport.height);

@@ -37,7 +37,6 @@ export const Attachments: React.FC<Props> = (
   updateAttachment,
     scale,
 }) => {
-  console.log('rerender')
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
   const [draggingAttach, setDraggingAttach] = useState<Attachment | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -89,7 +88,7 @@ export const Attachments: React.FC<Props> = (
       )
     }
   }
-
+  console.log(placements)
   return (
     <DndContext
       onDragStart={event => {
@@ -100,11 +99,23 @@ export const Attachments: React.FC<Props> = (
         });
       }}
       onDragEnd={event => {
-        updateAttachment(event.active.id, {
-          x: event.delta.x + (draggingAttach?.x || 0)  - initialWindowScroll.x,
-          y: event.delta.y + (draggingAttach?.y || 0)  - initialWindowScroll.y,
-          column_id: event.over?.id
-        })
+        let updated= {}
+        if(event.over){
+          const coverId = event.over.id
+          const placement= placements.find(p=> p.id === coverId)!
+          updated = {
+            x: placement.x * (scale || 1),
+            y: placement.y * (scale || 1),
+            column_id: coverId,
+          }
+        }else{
+          updated = {
+            x: event.delta.x + (draggingAttach?.x || 0)  - initialWindowScroll.x,
+            y: event.delta.y + (draggingAttach?.y || 0)  - initialWindowScroll.y,
+            column_id: null,
+          }
+        }
+        updateAttachment(event.active.id, updated)
         setDraggingId('')
       }}
       onDragCancel={() => setDraggingId('')}

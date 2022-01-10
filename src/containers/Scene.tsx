@@ -3,7 +3,6 @@ import { Page } from '../components/Page';
 import { Attachments } from '../components/Attachments';
 import { mockPlacements } from '../models/MockPlacements';
 import { Card } from 'react-bootstrap';
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 interface Props {
   currentPage: any;

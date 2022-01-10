@@ -110,13 +110,13 @@ export const useAttachments = () => {
   return {
     pageAttachments,
     allPageAttachments,
-    add: (newAttachment: Attachment) =>
+    addAttachment: (newAttachment: Attachment) =>
       dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }),
-    reset: (numberOfPages: number) =>
+    resetAttachments: (numberOfPages: number) =>
       dispatch({ type: ActionType.RESET, numberOfPages }),
-    remove: (id: string) =>
+    removeAttachments: (id: string) =>
       dispatch({ type: ActionType.REMOVE_ATTACHMENT, id }),
-    update: (id: string, attachment: Partial<Attachment>) =>
+    updateAttachments: (id: string, attachment: Partial<Attachment>) =>
       dispatch({
         type: ActionType.UPDATE_ATTACHMENT,
         id,

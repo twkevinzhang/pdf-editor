@@ -88,7 +88,7 @@ export const Attachments: React.FC<Props> = (
       )
     }
   }
-  console.log(placements)
+
   return (
     <DndContext
       onDragStart={event => {

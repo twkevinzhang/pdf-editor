@@ -1,25 +1,37 @@
 import { useReducer, useCallback, useState, useEffect } from 'react';
-import { getAllFile, saveFile } from '../utils/StorageService';
-import { fileToImageAttachment } from './useImageUploader';
+import {
+  getAllImageFiles,
+  removeAllImageFiles,
+  saveImageFile,
+} from '../utils/StorageService';
+import { fileToImage } from './useUploader';
 
 export const useDrawer = () => {
-  const [allAttachment, setAllAttachment] = useState<Attachment[]>([]);
+  const [allCandidates, setAllCandidates] = useState<Attachment[]>([]);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     async function func() {
-      const files = await getAllFile();
+      const files = await getAllImageFiles();
       const images = await Promise.all(
-        files.map(async (file) => await fileToImageAttachment(file))
+        files.map(async (file) => await fileToImage(file))
       );
-      setAllAttachment(images);
+      setAllCandidates(images);
     }
-    func();
-  }, []);
+    func().then();
+  }, [flag]);
+
+  const refresh = () => setFlag(!flag);
 
   return {
-    allAttachment,
-    setAllAttachment,
-    save: async (newAttachment: ImageAttachment) =>
-      await saveFile(newAttachment.file, newAttachment.id),
+    allCandidates: allCandidates,
+    saveImage: async (newAttachment: ImageAttachment) => {
+      await saveImageFile(newAttachment.file, newAttachment.id);
+      refresh();
+    },
+    removeAllImages: async () => {
+      await removeAllImageFiles();
+      refresh();
+    },
   };
 };

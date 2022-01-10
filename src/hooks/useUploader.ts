@@ -1,13 +1,22 @@
-import React, { useState, createRef } from 'react';
-import { readAsPDF, readAsDataURL, readAsImage } from '../utils/asyncReader';
+import React, { createRef, useState } from 'react';
+import { readAsDataURL, readAsImage, readAsPDF } from '../utils/asyncReader';
 import { Pdf } from './usePdf';
 import { AttachmentTypes } from '../entities';
 import uuid from 'uuid';
 
-export const useImageUploader = ({
-  afterUploadAttachment,
+export enum UploadTypes {
+  PDF = 'pdf',
+  IMAGE = 'image',
+}
+
+export const useUploader = ({
+  afterUploadPdf,
+  afterUploadImage,
+  use,
 }: {
-  afterUploadAttachment?: (upload: ImageAttachment) => void;
+  afterUploadPdf?: (upload: Pdf) => void;
+  afterUploadImage?: (upload: ImageAttachment) => void;
+  use: UploadTypes;
 }) => {
   const [uploading, setUploading] = useState(false);
   const inputRef = createRef<HTMLInputElement>();
@@ -15,7 +24,7 @@ export const useImageUploader = ({
   return {
     inputRef,
     uploading,
-    handleClick: () => {
+    handleUpload: () => {
       const input = inputRef.current;
       if (input) {
         input.value = '';
@@ -28,9 +37,7 @@ export const useImageUploader = ({
         dataTransfer?: DataTransfer;
       }
     ) => {
-      if (!uploading) {
-        return;
-      }
+      if (!uploading) return;
 
       const files: FileList | undefined =
         event.currentTarget.files ||
@@ -41,28 +48,27 @@ export const useImageUploader = ({
       }
 
       const file = files[0];
-
-      const result = await fileToImageAttachment(file);
-
-      if (afterUploadAttachment) {
-        console.log('===> was this also called');
-        afterUploadAttachment(result as ImageAttachment);
+      if (use === UploadTypes.IMAGE) {
+        const result = await fileToImage(file);
+        if (afterUploadImage) afterUploadImage(result);
+      } else if (use === UploadTypes.PDF) {
+        const result = await fileToPdf(file);
+        if (afterUploadPdf) afterUploadPdf(result);
       }
+
       setUploading(false);
     },
   };
 };
 
-export async function fileToImageAttachment(
-  file: File
-): Promise<ImageAttachment> {
+export async function fileToImage(file: File): Promise<ImageAttachment> {
   try {
     const url = await readAsDataURL(file);
     const img = await readAsImage(url as string);
     const id = uuid.v4();
     const { width, height } = img;
 
-    const imageAttachemnt: ImageAttachment = {
+    return {
       id,
       type: AttachmentTypes.IMAGE,
       width,
@@ -71,10 +77,25 @@ export async function fileToImageAttachment(
       y: 0,
       img,
       file,
-    };
-    return imageAttachemnt;
+    } as ImageAttachment;
   } catch (error) {
     console.log('Failed to load image', error);
     throw new Error('Failed to load image');
+  }
+}
+
+export async function fileToPdf(file: File): Promise<Pdf> {
+  try {
+    const pdf = await readAsPDF(file);
+    return {
+      file,
+      name: file.name,
+      pages: Array(pdf.numPages)
+        .fill(0)
+        .map((_, index) => pdf.getPage(index + 1)),
+    } as Pdf;
+  } catch (error) {
+    console.log('Failed to load pdf', error);
+    throw new Error('Failed to load PDF');
   }
 }

@@ -1,49 +1,45 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import {usePdfUploader} from "./hooks/usePdfUploader";
-import {Pdf, usePdf} from "./hooks/usePdf";
-import { Container, Button, Row, Col, Card, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Pdf, usePdf } from './hooks/usePdf';
+import { Button, Col, Container, Nav, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Page } from './components/Page';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
 import { Attachments as PageAttachments } from './components/Attachments';
-import { useImageUploader } from './hooks/useImageUploader';
-import uuid from "uuid";
+import { UploadTypes, useUploader } from './hooks/useUploader';
+import uuid from 'uuid';
 import { CandidateImage } from './containers/CandidateImage';
-import { saveFile } from './utils/StorageService';
 import { useDrawer } from './hooks/useDrawer';
 
-import {
-  BsChevronLeft,
-  BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill,
-} from 'react-icons/bs';
+import { BsChevronLeft, BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
 import { scaleTo } from './utils/helpers';
-import { Image } from './components/Image';
-import { Candidate } from './containers/Candidate';
 import { CandidateText } from './containers/CandidateText';
 
 const IMAGE_MAX_SIZE = 80;
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
-  const { save, allAttachment, setAllAttachment } = useDrawer();
-  const { add: addAttachment, allPageAttachments, pageAttachments, reset, update, remove, setPageIndex } = useAttachments();
+  const { saveImage, allCandidates, removeAllImages } = useDrawer();
+  const { addAttachment, allPageAttachments, pageAttachments, resetAttachments, updateAttachments, removeAttachments, setPageIndex } = useAttachments();
   const isPdfLoaded = !!file
 
-  const { inputRef, uploading, handleClick, fileOnChange } = usePdfUploader({
-        after: (uploaded: Pdf)=>{
-          setPdf(uploaded);
-          const numberOfPages = uploaded.pages.length;
-          reset(numberOfPages)
-        },
-    });
+  const { inputRef: pdfRef, handleUpload: handlePdfUpload, fileOnChange: pdfOnChange } = useUploader({
+    use: UploadTypes.PDF,
+    afterUploadPdf: (uploaded: Pdf)=>{
+      setPdf(uploaded);
+      const numberOfPages = uploaded.pages.length;
+      resetAttachments(numberOfPages)
+    }
+  });
 
-  const { inputRef: imgRef, uploading: imgUploading, handleClick: handleImgClick, fileOnChange: imgOnChange } = useImageUploader({
-    afterUploadAttachment,
+  const { inputRef: imgRef, handleUpload: handleImageUpload, fileOnChange: imgOnChange } = useUploader({
+    use: UploadTypes.IMAGE,
+    afterUploadImage: (attachment: ImageAttachment)=>{
+        saveImage(attachment).then()
+        addScaledAttachment(attachment)
+      }
   });
 
   useEffect(() => setPageIndex(pageIndex), [pageIndex, setPageIndex]);
@@ -64,14 +60,11 @@ const App: React.FC<{}> = () => {
     addScaledAttachment(newTextAttachment)
   };
 
+  const handleSave = () => savePdf(getUnscaledAllPageAttachments(allPageAttachments))
+
   const addScaledAttachment = (attachment: Attachment) => {
     addAttachment(getScaledAttachment(attachment));
   };
-
-  function afterUploadAttachment (attachment: ImageAttachment){
-    save(attachment).then()
-    addScaledAttachment(attachment)
-  }
 
   function getScaledAttachment(attachment: Attachment):Attachment{
     if(attachment.type === AttachmentTypes.TEXT){
@@ -142,15 +135,13 @@ const App: React.FC<{}> = () => {
     }
   }
 
-  const handleSave = () => savePdf(getUnscaledAllPageAttachments(allPageAttachments))
-
   const hiddenInputs = (
     <>
       <input
-        ref={inputRef}
+        ref={pdfRef}
         type="file"
         accept="application/pdf"
-        onChange={fileOnChange}
+        onChange={pdfOnChange}
         style={{ display: 'none' }}
       />
       <input
@@ -189,7 +180,7 @@ const App: React.FC<{}> = () => {
         <Row className='justify-content-center mt-lg-5'>
           <div>
             <h3>上傳一份 Pdf！</h3>
-            <Button onClick={handleClick}><BsFillCloudUploadFill /> Upload</Button>
+            <Button onClick={handlePdfUpload}><BsFillCloudUploadFill /> Upload</Button>
           </div>
         </Row>
         </>)}
@@ -201,7 +192,7 @@ const App: React.FC<{}> = () => {
               <CandidateText scale={scale} onClick={handleText}>
                 新增文字
               </CandidateText>
-              {allAttachment
+              {allCandidates
                 .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
                 .map(attachment=>{
                   return <CandidateImage
@@ -212,7 +203,7 @@ const App: React.FC<{}> = () => {
                   />
                 })
               }
-              <CandidateText scale={scale} onClick={handleImgClick}>
+              <CandidateText scale={scale} onClick={handleImageUpload}>
                 上傳圖片
               </CandidateText>
             </>)}
@@ -226,7 +217,7 @@ const App: React.FC<{}> = () => {
               </div>
               <div>
                 {isPdfLoaded && (<Nav className="justify-content-center">
-                  <Nav.Link onClick={handleClick}><BsFillCloudUploadFill /> Upload New</Nav.Link>
+                  <Nav.Link onClick={handlePdfUpload}><BsFillCloudUploadFill /> Upload New</Nav.Link>
                   <Nav.Link onClick={handleSave}><BsFillCloudDownloadFill /> Save </Nav.Link>
                 </Nav>)}
               </div>
@@ -244,8 +235,8 @@ const App: React.FC<{}> = () => {
                 >
                 { dimensions && (
                   <PageAttachments
-                    removeAttachment={remove}
-                    updateAttachment={update}
+                    removeAttachment={removeAttachments}
+                    updateAttachment={updateAttachments}
                     pageDimensions={dimensions}
                     attachments={pageAttachments}
                     placements={mockPlacements()}

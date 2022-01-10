@@ -188,7 +188,10 @@ const App: React.FC<{}> = () => {
           <Col sm={3}>
             {isPdfLoaded && (<>
               <h3>加入附件</h3>
-              <p>這些圖片被儲存在 local 的 IndexedDB</p>
+              <p>
+                這些圖片被儲存在 local 的 IndexedDB。
+                <Button variant="link" onClick={removeAllImages}>清空圖片</Button>
+              </p>
               <CandidateText scale={scale} onClick={handleText}>
                 新增文字
               </CandidateText>

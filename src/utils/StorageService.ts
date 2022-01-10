@@ -14,7 +14,7 @@ interface MyDB extends DBSchema {
   };
 }
 
-const dbPromise = openDB<MyDB>('MY_DB', 3, {
+const dbPromise = openDB<MyDB>('MY_DB', 10, {
   upgrade(db, oldVersion, newVersion, transaction) {
     db.createObjectStore(IMAGES_TABLE_NAME);
     db.createObjectStore(PDFS_TABLE_NAME);
@@ -32,7 +32,7 @@ const dbPromise = openDB<MyDB>('MY_DB', 3, {
 
 export async function saveImageFile(value: File, key: string) {
   const db = await dbPromise;
-  await db.put(IMAGES_TABLE_NAME, value, key);
+  return await db.put(IMAGES_TABLE_NAME, value, key);
 }
 
 export async function getAllImageFiles() {
@@ -42,13 +42,13 @@ export async function getAllImageFiles() {
 
 export async function removeAllImageFiles() {
   const db = await dbPromise;
-  await db.deleteObjectStore(IMAGES_TABLE_NAME);
-  await db.createObjectStore(IMAGES_TABLE_NAME);
+  const transaction = db.transaction([IMAGES_TABLE_NAME], 'readwrite');
+  await transaction.objectStore(IMAGES_TABLE_NAME).clear();
 }
 
 export async function savePdfFile(value: File, key: string) {
   const db = await dbPromise;
-  await db.put(PDFS_TABLE_NAME, value, key);
+  return await db.put(PDFS_TABLE_NAME, value, key);
 }
 
 export async function getAllPdfFiles() {

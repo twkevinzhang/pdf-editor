@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, CSSProperties } from 'react';
+import React, { useState, useEffect, useRef, CSSProperties, ReactNode } from 'react';
 
 interface Position {
   left?: number;
@@ -12,23 +12,30 @@ interface Props {
   style?: CSSProperties
   translateX: string;
   translateY: string;
+  children?: ReactNode | null;
 }
 
-export const Stone = (props: React.PropsWithChildren<Props>) => {
-  const style = props.style? props.style : {}
+export const Stone = (
+  {
+    style,
+    translateX,
+    translateY,
+    position,
+    children,
+} : Props) => {
   return (
     <div
       style={{
         position: 'absolute',
-        ...props.position,
+        ...position,
         width: '3rem',
         height: '3rem',
         margin: 'auto',
         borderRadius: '9999px',
-        transform: `translateX(${props.translateX}) translateY(${props.translateY}) rotate(0) skewX(0) skewY(0) scaleX(0.25) scaleY(0.25)`,
+        transform: `translateX(${translateX}) translateY(${translateY}) rotate(0) skewX(0) skewY(0) scaleX(0.25) scaleY(0.25)`,
         ...style,
       }}>
-      {props.children}
+      {children}
     </div>
   );
 };

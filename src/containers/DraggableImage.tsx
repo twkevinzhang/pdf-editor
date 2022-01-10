@@ -44,14 +44,13 @@ export const DraggableImage = (
       translateX={"0"}
       translateY={"-50%"}
       style={{
-        zIndex: "1000",
-        cursor: 'pointer',
         backgroundColor: 'white',
       }}
     >
       <BsXCircleFill
         onClick={removeImage}
         style={{
+          cursor: 'pointer',
           color:'rgb(245, 101, 101)',
           width: "100%",
           height: "100%",

@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "55ccc1d6922f141ad3165e8a16f69924",
+    "revision": "74fef3358a1d74fbb62093153fcd1940",
     "url": "/pdf-editor/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/pdf-editor/static/css/2.68a81a89.chunk.css"
   },
   {
-    "revision": "879dc1e62fffeb4c5a43",
+    "revision": "b32dda1c8f1a8ff1e89c",
     "url": "/pdf-editor/static/css/main.d1b05096.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/pdf-editor/static/js/2.d30aef89.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "879dc1e62fffeb4c5a43",
-    "url": "/pdf-editor/static/js/main.ab59dd8e.chunk.js"
+    "revision": "b32dda1c8f1a8ff1e89c",
+    "url": "/pdf-editor/static/js/main.ef2f894b.chunk.js"
   },
   {
     "revision": "8ec619afac877d34a6e2",

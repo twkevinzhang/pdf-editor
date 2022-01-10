@@ -5,8 +5,8 @@ import { DraggableSyntheticListeners, Translate } from '@dnd-kit/core';
 
 interface Props {
   img: HTMLImageElement;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   style?: CSSProperties,
   listeners?: DraggableSyntheticListeners;
   draggableAttrs?: object;
@@ -29,8 +29,8 @@ export const Image = forwardRef<HTMLImageElement, Props>((
   return (
     <img
       style={{
-        width: width+"px" ,
-        height: height+"px",
+        width: width || "100%" ,
+        height: height || "100%" ,
         cursor: 'move',
         ...style,
       }}

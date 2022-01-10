@@ -18,14 +18,12 @@ import { Text } from './Text';
 interface Props {
   placements: Placement[];
   attachments: Attachment[];
-  scale?:number;
 }
 
 export const Placements: React.FC<Props> = (
   {
     placements,
     attachments,
-    scale=1,
 }) => {
 
   function getHiddenPlaceholder(attachments: Attachment[]) {
@@ -48,10 +46,6 @@ export const Placements: React.FC<Props> = (
         return <Droppable
           key={id}
           {...placement}
-          width={placement.width * scale}
-          height={placement.height * scale}
-          x={placement.x * scale}
-          y={placement.y * scale}
         >
           {getHiddenPlaceholder(attachments?.filter(a => a.column_id === id))}
         </Droppable>

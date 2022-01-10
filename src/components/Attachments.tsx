@@ -28,6 +28,8 @@ interface Props {
   scale?:number;
 }
 
+const IMAGE_WIDTH_MAX_SIZE = 90;
+const IMAGE_HEIGHT_MAX_SIZE = 50;
 export const Attachments: React.FC<Props> = (
   {
     placements,
@@ -35,12 +37,18 @@ export const Attachments: React.FC<Props> = (
   pageDimensions,
     removeAttachment,
   updateAttachment,
-    scale,
+    scale=1,
 }) => {
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
-  const [draggingAttach, setDraggingAttach] = useState<Attachment | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [snapshot, setSnapshot] = useState<ReactNode | null>(null);
+  const scaledAttachments: Attachment[] = attachments.map(a=>getScaledAttachment(a))
+  const scaledPlacements: Placement[] = placements.map(p=>({
+    ...p,
+    width: p.width * scale,
+    height: p.height * scale,
+    x: p.x * scale,
+    y: p.y * scale,
+  }))
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -48,24 +56,28 @@ export const Attachments: React.FC<Props> = (
     },
   });
 
-  useEffect(()=>{
-      if(draggingId){
-        const attachment = attachments.find(a=> a.id === draggingId) || null
-        let snapshot : ReactNode = null
-        if(attachment?.type === AttachmentTypes.TEXT){
-          snapshot = <Text {...attachment as TextAttachment} />
-        }else if(attachment?.type === AttachmentTypes.IMAGE) {
-          snapshot = <Image {...attachment as ImageAttachment} />
-        }
-        setDraggingAttach(attachment)
-        setSnapshot(snapshot)
-      }
+  let snapshot: ReactNode = null
+  if(draggingId) {
+    const scaled = scaledAttachments.find(a => a.id === draggingId)!
+    if (scaled.type === AttachmentTypes.TEXT) {
+      snapshot = <Text {...scaled as TextAttachment} />
+    } else if (scaled.type === AttachmentTypes.IMAGE) {
+      snapshot = <Image {...scaled as ImageAttachment} />
     }
-    , [draggingId])
+  }else{
+    snapshot = null
+  }
 
   const handleAttachmentUpdate = (id: string) => (
     attachment: Partial<Attachment>
-  ) => updateAttachment(id, attachment );
+  ) => updateAttachment(id, attachment);
+
+  function resizeImage(newWidth: number, newHeight: number, attachmentId: string){
+    handleAttachmentUpdate(attachmentId)({
+      width: newWidth / scale,
+      height: newHeight / scale,
+    })
+  }
 
   function getAttachmentJsx(attachment: Attachment, key?: string,){
     if (attachment.type === AttachmentTypes.IMAGE) {
@@ -76,7 +88,7 @@ export const Attachments: React.FC<Props> = (
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
           removeImage={() => removeAttachment(attachment.id)}
-          updateImageAttachment={handleAttachmentUpdate(attachment.id)}
+          resizeImage={(w, h )=> resizeImage(w, h, attachment.id)}
           {...(attachment as ImageAttachment)}
         />
       );
@@ -95,6 +107,43 @@ export const Attachments: React.FC<Props> = (
     }
   }
 
+  function getScaledAttachment(attachment: Attachment):Attachment{
+    if(attachment.type === AttachmentTypes.TEXT){
+      attachment= getScaledText(attachment as TextAttachment)
+    }else if(attachment.type === AttachmentTypes.IMAGE){
+      attachment= getScaledImage(attachment as ImageAttachment)
+    }
+    return attachment;
+  }
+
+  function getScaledText(attachment: TextAttachment): TextAttachment{
+    return {
+      ...attachment,
+      x: attachment.x * scale,
+      y: attachment.y * scale,
+      width: attachment.width * scale,
+      height: attachment.height * scale,
+      size: attachment.size? attachment.size * scale : undefined,
+    }
+  }
+
+  function getScaledImage(attachment: ImageAttachment): ImageAttachment{
+    const { width, height } = attachment;
+    // const { width, height } = scaleTo(
+    //   attachment.width,
+    //   attachment.height,
+    //   IMAGE_WIDTH_MAX_SIZE,
+    //   IMAGE_HEIGHT_MAX_SIZE
+    // )
+    return {
+      ...attachment,
+      x: attachment.x * scale,
+      y: attachment.y * scale,
+      width: width * scale,
+      height: height * scale,
+    }
+  }
+
   return (
     <DndContext
       sensors={[mouseSensor]}
@@ -106,46 +155,42 @@ export const Attachments: React.FC<Props> = (
         });
       }}
       onDragEnd={event => {
-        const _draggingAttach = draggingAttach!
+        const attachment = attachments.find(a=> a.id === draggingId)!
         let updated : Partial<Attachment>
         if(event.over){
           const coverId = event.over.id
           const placement= placements.find(p=> p.id === coverId)!
-          const _scale = scale || 1;
           const { width, height } = scaleTo(
-            _draggingAttach.width,
-            _draggingAttach.height,
+            attachment.width,
+            attachment.height,
             placement.width,
-            placement.height
+            placement.height,
           )
           updated = {
-            x: placement.x * _scale,
-            y: placement.y * _scale,
+            x: placement.x,
+            y: placement.y,
             column_id: coverId,
-            width: width * _scale,
-            height: height * _scale,
+            width: width,
+            height: height,
           }
-
-          console.log(updated)
         }else{
           updated = {
-            x: event.delta.x + (_draggingAttach.x || 0)  - initialWindowScroll.x,
-            y: event.delta.y + (_draggingAttach.y || 0)  - initialWindowScroll.y,
+            x: event.delta.x / scale + (attachment.x || 0)  - initialWindowScroll.x / scale,
+            y: event.delta.y / scale + (attachment.y || 0)  - initialWindowScroll.y / scale,
             column_id: undefined,
           }
         }
-        updateAttachment(event.active.id, updated)
-        setDraggingId('')
+        handleAttachmentUpdate(event.active.id)(updated)
+        setDraggingId(null)
       }}
-      onDragCancel={() => setDraggingId('')}
+      onDragCancel={() => setDraggingId(null)}
     >
       <Placements
-        placements={placements}
+        placements={scaledPlacements}
         attachments={attachments}
-        scale={scale}
       />
 
-      {attachments.map(a => {
+      {scaledAttachments.map(a => {
         const key = a.id;
         return getAttachmentJsx(a, key)
       })}

@@ -6,12 +6,13 @@ import { Direction } from 're-resizable/lib/resizer';
 import { BsFillCircleFill, BsXCircleFill } from 'react-icons/all';
 import { Stone } from '../components/Stone';
 import { Translate, useDraggable } from '@dnd-kit/core';
+import { Resizable, ResizeCallback } from 're-resizable';
 
 interface Props {
   pageWidth: number;
   pageHeight: number;
   removeImage?: () => void;
-  updateImageAttachment?: (imageObject: Partial<ImageAttachment>) => void;
+  resizeImage?: (width: number, height: number) => void;
   hidden?: boolean;
   x:number;
   y:number;
@@ -29,10 +30,26 @@ export const DraggableImage = (
     hidden=false,
     x,
     y,
+    resizeImage,
 }: ImageAttachment & Props) => {
   const {attributes: draggableAttrs, isDragging, listeners, setNodeRef} = useDraggable({
     id,
   });
+
+  const onResizeStop : ResizeCallback = (e, direction, ref, d)=>{
+      function strToInt(strPx: string): number{
+        const strInt= strPx.replace('px','')
+        const int= parseInt(strInt)
+        if(int){
+          return int
+        }else{
+          throw new Error(strPx+ " can't parse to int: " + int + "when parse "+ strInt)
+        }
+      }
+
+      if(resizeImage)
+        resizeImage(strToInt(ref.style.width), strToInt(ref.style.height));
+  }
 
   const deleteButton =
     <Stone
@@ -124,27 +141,30 @@ export const DraggableImage = (
     : {}
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        'left': `${x ?? 0}px`,
-        'top': `${y ?? 0}px`,
-        ...hiddenStyle,
-      }}
-    >
-      {removeImage && deleteButton}
-      {leftTop}
-      {rightTop}
-      {leftBottom}
-      {rightBottom}
-      <Component
-        ref={setNodeRef}
-        listeners={listeners}
-        draggableAttrs={draggableAttrs}
-        style={imageStyle}
-        img={img}
-        width={width}
-        height={height}/>
-    </div>
+      <Resizable
+        size={{
+          width,
+          height,
+        }}
+        onResizeStop={onResizeStop}
+        style={{
+          position: "absolute",
+          'left': `${x ?? 0}px`,
+          'top': `${y ?? 0}px`,
+          ...hiddenStyle,
+        }}
+      >
+        {removeImage && deleteButton}
+        {leftTop}
+        {rightTop}
+        {leftBottom}
+        {rightBottom}
+        <Component
+          ref={setNodeRef}
+          listeners={listeners}
+          draggableAttrs={draggableAttrs}
+          style={imageStyle}
+          img={img}/>
+      </Resizable>
   );
 };

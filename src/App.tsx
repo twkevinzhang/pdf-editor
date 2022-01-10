@@ -17,7 +17,8 @@ import { Scene } from './containers/Scene';
 import { scaleTo } from './utils/helpers';
 import { CandidateText } from './containers/CandidateText';
 
-const IMAGE_MAX_SIZE = 80;
+const IMAGE_WIDTH_MAX_SIZE = 90;
+const IMAGE_HEIGHT_MAX_SIZE = 50;
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
@@ -90,7 +91,8 @@ const App: React.FC<{}> = () => {
     const { width, height } = scaleTo(
       attachment.width,
       attachment.height,
-      IMAGE_MAX_SIZE,
+      IMAGE_WIDTH_MAX_SIZE,
+      IMAGE_HEIGHT_MAX_SIZE
     )
     return {
       ...attachment,

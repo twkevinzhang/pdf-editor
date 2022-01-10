@@ -16,7 +16,7 @@ interface Props {
   scale?: number;
 }
 
-const IMAGE_MAX_SIZE = 80;
+const IMAGE_MAX_SIZE = 90;
 export const CandidateImage = (
   {
     attachment,

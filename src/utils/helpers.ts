@@ -1,18 +1,19 @@
 export const scaleTo = (
   w: number,
   h: number,
-  max: number
+  wMax: number,
+  hMax: number = wMax
 ): {
   width: number;
   height: number;
 } => {
   let scale = 1;
-  if (w > max) {
-    scale = max / w;
+  if (w > wMax) {
+    scale = wMax / w;
   }
 
-  if (h > max) {
-    scale = Math.min(scale, max / h);
+  if (h > hMax) {
+    scale = Math.min(scale, hMax / h);
   }
 
   const width = w * scale;

@@ -10,8 +10,8 @@ import { BsPencil, BsXCircleFill } from 'react-icons/all';
 interface Props {
   pageWidth: number;
   pageHeight: number;
-  removeText: () => void;
-  updateTextAttachment: (textObject: Partial<TextAttachment>) => void;
+  removeText?: () => void;
+  updateTextAttachment?: (textObject: Partial<TextAttachment>) => void;
   size?: number,
   lineHeight?: number,
   fontFamily?: string,
@@ -51,9 +51,9 @@ export const DraggableText = (
       }
     }else{
       document.getSelection()?.removeAllRanges();
-      if(content === ''){
+      if(content === '' && removeText){
         removeText()
-      }else{
+      }else if(updateTextAttachment){
         const lines = [content];
         updateTextAttachment({
           lines,
@@ -117,7 +117,7 @@ export const DraggableText = (
         ...hiddenStyle
       }}
     >
-      {editing? null : editButton}
+      {editing && removeText && updateTextAttachment ? null : editButton}
       <Text
         ref={setNodeRef}
         listeners={listeners}

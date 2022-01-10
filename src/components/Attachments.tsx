@@ -42,6 +42,12 @@ export const Attachments: React.FC<Props> = (
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<ReactNode | null>(null);
 
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 1,
+    },
+  });
+
   useEffect(()=>{
       if(draggingId){
         const attachment = attachments.find(a=> a.id === draggingId) || null
@@ -91,6 +97,7 @@ export const Attachments: React.FC<Props> = (
 
   return (
     <DndContext
+      sensors={[mouseSensor]}
       onDragStart={event => {
         setDraggingId(event.active.id)
         setInitialWindowScroll({
@@ -99,7 +106,7 @@ export const Attachments: React.FC<Props> = (
         });
       }}
       onDragEnd={event => {
-        let updated= {}
+        let updated : Partial<Attachment>
         if(event.over){
           const coverId = event.over.id
           const placement= placements.find(p=> p.id === coverId)!
@@ -112,7 +119,7 @@ export const Attachments: React.FC<Props> = (
           updated = {
             x: event.delta.x + (draggingAttach?.x || 0)  - initialWindowScroll.x,
             y: event.delta.y + (draggingAttach?.y || 0)  - initialWindowScroll.y,
-            column_id: null,
+            column_id: undefined,
           }
         }
         updateAttachment(event.active.id, updated)

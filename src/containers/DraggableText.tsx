@@ -5,7 +5,7 @@ import { Rnd } from 'react-rnd';
 import { Translate, useDraggable } from '@dnd-kit/core';
 import { Text } from '../components/Text';
 import { Stone } from '../components/Stone';
-import { BsPencil, BsXCircleFill } from 'react-icons/all';
+import { BsFillCheckCircleFill, BsPencil, BsXCircleFill } from 'react-icons/all';
 
 interface Props {
   pageWidth: number;
@@ -68,31 +68,55 @@ export const DraggableText = (
     setContent(value);
   };
 
-  function onEdit(){
+  function handleEdit(){
     setEditing(true)
   }
 
-  const onBlur = (e: any) =>{
+  const handleOk = () =>{
     setEditing(false)
   }
 
-  const editButton =
+  const okButton =
     <Stone
       position={{
+        left: 0,
         top: 0,
         right: 0,
       }}
-      translateX={"50%"}
+      translateX={"0"}
       translateY={"-50%"}
       style={{
-        cursor: 'pointer',
-        backgroundColor: '#1eb99d',
+        backgroundColor: 'white',
       }}
     >
-      <BsPencil
-        onClick={onEdit}
+      <BsFillCheckCircleFill
+        onClick={handleOk}
         style={{
-          color:'white',
+          cursor: 'pointer',
+          color: '#1eb99d',
+          width: "100%",
+          height: "100%",
+        }}/>
+    </Stone>
+
+  const deleteButton =
+    <Stone
+      position={{
+        left: 0,
+        top: 0,
+        right: 0,
+      }}
+      translateX={"0"}
+      translateY={"-50%"}
+      style={{
+        backgroundColor: 'white',
+      }}
+    >
+      <BsXCircleFill
+        onClick={removeText}
+        style={{
+          cursor: 'pointer',
+          color:'rgb(245, 101, 101)',
           width: "100%",
           height: "100%",
         }}/>
@@ -116,13 +140,14 @@ export const DraggableText = (
         'top': `${y ?? 0}px`,
         ...hiddenStyle
       }}
+      onDoubleClick={handleEdit}
     >
-      {editing && removeText && updateTextAttachment ? null : editButton}
+      {editing ? okButton : deleteButton}
       <Text
         ref={setNodeRef}
         listeners={listeners}
         draggableAttrs={draggableAttrs}
-        onBlur={onBlur}
+        onBlur={handleOk}
         text={content}
         size={size}
         lineHeight= { lineHeight }

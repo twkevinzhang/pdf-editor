@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "74fef3358a1d74fbb62093153fcd1940",
+    "revision": "9c9c05a91e38d5b4af666fd0ac10d75c",
     "url": "/pdf-editor/index.html"
   },
   {
-    "revision": "9613e2cd400e4f5537e2",
+    "revision": "b8dba41cf60aa35613c7",
     "url": "/pdf-editor/static/css/2.68a81a89.chunk.css"
   },
   {
-    "revision": "b32dda1c8f1a8ff1e89c",
+    "revision": "d75e6c04fc3901c1e5b5",
     "url": "/pdf-editor/static/css/main.d1b05096.chunk.css"
   },
   {
-    "revision": "9613e2cd400e4f5537e2",
-    "url": "/pdf-editor/static/js/2.d30aef89.chunk.js"
+    "revision": "b8dba41cf60aa35613c7",
+    "url": "/pdf-editor/static/js/2.a6ad2eec.chunk.js"
   },
   {
     "revision": "ae6bb62977b25ec73f0509e3cbccba19",
-    "url": "/pdf-editor/static/js/2.d30aef89.chunk.js.LICENSE.txt"
+    "url": "/pdf-editor/static/js/2.a6ad2eec.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b32dda1c8f1a8ff1e89c",
-    "url": "/pdf-editor/static/js/main.ef2f894b.chunk.js"
+    "revision": "d75e6c04fc3901c1e5b5",
+    "url": "/pdf-editor/static/js/main.31e69956.chunk.js"
   },
   {
     "revision": "8ec619afac877d34a6e2",

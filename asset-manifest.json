@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/pdf-editor/static/css/main.d1b05096.chunk.css",
+    "main.js": "/pdf-editor/static/js/main.a4fc3027.chunk.js",
+    "main.js.map": "/pdf-editor/static/js/main.a4fc3027.chunk.js.map",
+    "runtime-main.js": "/pdf-editor/static/js/runtime-main.cdf2ed67.js",
+    "runtime-main.js.map": "/pdf-editor/static/js/runtime-main.cdf2ed67.js.map",
+    "static/css/2.68a81a89.chunk.css": "/pdf-editor/static/css/2.68a81a89.chunk.css",
+    "static/js/2.b22d7543.chunk.js": "/pdf-editor/static/js/2.b22d7543.chunk.js",
+    "static/js/2.b22d7543.chunk.js.map": "/pdf-editor/static/js/2.b22d7543.chunk.js.map",
+    "index.html": "/pdf-editor/index.html",
+    "precache-manifest.7f212961eaf603c92a82e9fca77af37a.js": "/pdf-editor/precache-manifest.7f212961eaf603c92a82e9fca77af37a.js",
+    "service-worker.js": "/pdf-editor/service-worker.js",
+    "static/css/2.68a81a89.chunk.css.map": "/pdf-editor/static/css/2.68a81a89.chunk.css.map",
+    "static/css/main.d1b05096.chunk.css.map": "/pdf-editor/static/css/main.d1b05096.chunk.css.map",
+    "static/js/2.b22d7543.chunk.js.LICENSE.txt": "/pdf-editor/static/js/2.b22d7543.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cdf2ed67.js",
+    "static/css/2.68a81a89.chunk.css",
+    "static/js/2.b22d7543.chunk.js",
+    "static/css/main.d1b05096.chunk.css",
+    "static/js/main.a4fc3027.chunk.js"
+  ]
+}

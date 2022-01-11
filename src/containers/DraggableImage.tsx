@@ -141,20 +141,21 @@ export const DraggableImage = (
     : {}
 
   return (
+    <div
+      style={{
+        position: "absolute",
+        'left': `${x ?? 0}px`,
+        'top': `${y ?? 0}px`,
+        ...hiddenStyle,
+      }}
+    >
       <Resizable
         size={{
           width,
           height,
         }}
         onResizeStop={onResizeStop}
-        style={{
-          position: "absolute",
-          'left': `${x ?? 0}px`,
-          'top': `${y ?? 0}px`,
-          ...hiddenStyle,
-        }}
       >
-        {removeImage && deleteButton}
         {leftTop}
         {rightTop}
         {leftBottom}
@@ -166,5 +167,8 @@ export const DraggableImage = (
           style={imageStyle}
           img={img}/>
       </Resizable>
+      {removeImage && deleteButton}
+    </div>
+
   );
 };

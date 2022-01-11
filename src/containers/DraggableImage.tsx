@@ -74,63 +74,6 @@ export const DraggableImage = (
         }}/>
     </Stone>
 
-  const stone =
-    <BsFillCircleFill
-      style={{
-        color:'#90cdf4',
-        width: "100%",
-        height: "100%",
-      }}
-    />
-
-  const leftTop =
-    <Stone
-      position={{
-        left: 0,
-        top: 0,
-      }}
-      translateX={"-50%"}
-      translateY={"-50%"}
-    >
-      {stone}
-    </Stone>
-
-  const rightTop =
-    <Stone
-      position={{
-        right: 0,
-        top: 0,
-      }}
-      translateX={"50%"}
-      translateY={"-50%"}
-    >
-      {stone}
-    </Stone>
-
-  const leftBottom =
-    <Stone
-      position={{
-        left: 0,
-        bottom: 0,
-      }}
-      translateX={"-50%"}
-      translateY={"50%"}
-    >
-      {stone}
-    </Stone>
-
-  const rightBottom =
-    <Stone
-      position={{
-        right: 0,
-        bottom: 0,
-      }}
-      translateX={"50%"}
-      translateY={"50%"}
-    >
-      {stone}
-    </Stone>
-
   let imageStyle: CSSProperties = {
     border:'0.3px dashed gray',
     cursor: 'move',
@@ -155,11 +98,17 @@ export const DraggableImage = (
           height,
         }}
         onResizeStop={onResizeStop}
+        enable={{
+          top: false,
+          right: false,
+          bottom: false,
+          left: false,
+          topRight: false,
+          bottomRight: false,
+          bottomLeft: false,
+          topLeft: false,
+        }}
       >
-        {leftTop}
-        {rightTop}
-        {leftBottom}
-        {rightBottom}
         <Component
           ref={setNodeRef}
           listeners={listeners}

@@ -88,7 +88,7 @@ export const Attachments: React.FC<Props> = (
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
           removeImage={() => removeAttachment(attachment.id)}
-          resizeImage={(w, h )=> resizeImage(w, h, attachment.id)}
+          // resizeImage={(w, h )=> resizeImage(w, h, attachment.id)}
           {...(attachment as ImageAttachment)}
         />
       );
@@ -128,13 +128,12 @@ export const Attachments: React.FC<Props> = (
   }
 
   function getScaledImage(attachment: ImageAttachment): ImageAttachment{
-    const { width, height } = attachment;
-    // const { width, height } = scaleTo(
-    //   attachment.width,
-    //   attachment.height,
-    //   IMAGE_WIDTH_MAX_SIZE,
-    //   IMAGE_HEIGHT_MAX_SIZE
-    // )
+    const { width, height } = scaleTo(
+      attachment.width,
+      attachment.height,
+      IMAGE_WIDTH_MAX_SIZE,
+      IMAGE_HEIGHT_MAX_SIZE
+    )
     return {
       ...attachment,
       x: attachment.x * scale,

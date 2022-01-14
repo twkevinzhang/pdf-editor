@@ -158,20 +158,27 @@ export const Attachments: React.FC<Props> = (
         const attachment = attachments.find(a=> a.id === draggingId)!
         let updated : Partial<Attachment>
         if(event.over){
-          const coverId = event.over.id
-          const placement= placements.find(p=> p.id === coverId)!
+          const column_id = event.over.id
+          const placement= placements.find(p=> p.id === column_id)!
           const { width, height } = scaleTo(
             attachment.width,
             attachment.height,
             placement.width,
             placement.height,
           )
+
+          let x= placement.x;
+          let y= placement.y;
+          if(width < placement.width){
+            const space = placement.width - width;
+            x = placement.x + space / 2
+          }
           updated = {
-            x: placement.x,
-            y: placement.y,
-            column_id: coverId,
-            width: width,
-            height: height,
+            x,
+            y,
+            column_id,
+            width,
+            height,
           }
         }else{
           updated = {

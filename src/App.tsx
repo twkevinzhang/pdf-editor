@@ -16,11 +16,15 @@ import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
 import { scaleTo } from './utils/helpers';
 import { CandidateText } from './containers/CandidateText';
+import { saveImageFile } from './utils/StorageService';
+import ReactInputPosition from "react-input-position";
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
+  const [ drawerWidth, setDrawerWidth ] = useState(350);
+  const [ handleAttachment, setHandleAttachment ] = useState<Attachment | undefined>();
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
-  const { saveImage, allCandidates, removeAllImages } = useDrawer();
+  const { allCandidates, removeAllImages, refresh: refreshDrawer } = useDrawer();
   const { addAttachment, allPageAttachments, pageAttachments, resetAttachments, updateAttachments, removeAttachments, setPageIndex } = useAttachments();
   const isPdfLoaded = !!file
 
@@ -36,7 +40,7 @@ const App: React.FC<{}> = () => {
   const { inputRef: imgRef, handleUpload: handleImageUpload, fileOnChange: imgOnChange } = useUploader({
     use: UploadTypes.IMAGE,
     afterUploadImage: (attachment: ImageAttachment)=>{
-        saveImage(attachment).then()
+        saveImageFile(attachment.file, attachment.id).then(()=>refreshDrawer());
         addAttachment(attachment)
       }
   });
@@ -60,6 +64,9 @@ const App: React.FC<{}> = () => {
   };
 
   const handleSave = () => savePdf(allPageAttachments)
+
+  const message =
+    handleAttachment? "點擊 PDF 的某處來新增附件": "這些圖片被儲存在 local 的 IndexedDB。"
 
   const hiddenInputs = (
     <>
@@ -111,13 +118,14 @@ const App: React.FC<{}> = () => {
         </Row>
         </>)}
         <Row>
-          <Col sm={3} style={{
+          <Col style={{
             position: 'fixed',
+            width: drawerWidth,
           }}>
             {isPdfLoaded && (<>
               <h3>加入附件</h3>
               <p>
-                這些圖片被儲存在 local 的 IndexedDB。
+                {message}
                 <Button variant="link" onClick={removeAllImages}>清空圖片</Button>
               </p>
               <CandidateText scale={scale} onClick={handleText}>
@@ -128,8 +136,11 @@ const App: React.FC<{}> = () => {
                 .map(attachment=>{
                   return <CandidateImage
                     key={attachment.id}
+                    active={handleAttachment?.id === attachment.id}
+                    onClick={()=>{
+                      setHandleAttachment(attachment)
+                    }}
                     attachment={attachment as ImageAttachment}
-                    addAttachment={addAttachment}
                     scale={scale}
                   />
                 })
@@ -139,9 +150,9 @@ const App: React.FC<{}> = () => {
               </CandidateText>
             </>)}
           </Col>
-          <Col sm={9} style={{
+          <Col style={{
             position: 'relative',
-            left: "25%",
+            left: drawerWidth,
           }}>
             <div className="pt-2 pb-2 d-flex justify-content-between" style={{
               width: dimensions?.width || 0,
@@ -161,11 +172,17 @@ const App: React.FC<{}> = () => {
               </div>
             </div>
             { currentPage && (
+              <ReactInputPosition
+                trackPassivePosition={true}
+                cursorStyle={handleAttachment ? undefined : 'default'}
+              >
               <Scene
                 currentPage={currentPage}
                 dimensions={dimensions}
                 setDimensions={setDimensions}
                 scale={scale}
+                handleAttachment={handleAttachment}
+                addAttachment={addAttachment}
                 >
                 { dimensions && (
                   <PageAttachments
@@ -178,6 +195,7 @@ const App: React.FC<{}> = () => {
                   />
                 )}
               </Scene>
+              </ReactInputPosition>
             )}
           </Col>
         </Row>

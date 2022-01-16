@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createRef, useReducer } from 'react';
+import React, { useState, useEffect, useRef, createRef, useReducer, MouseEventHandler } from 'react';
 import { Image, Image as Component } from '../components/Image';
 import { Position, ResizableDelta, Rnd } from 'react-rnd';
 import { DraggableData, DraggableEvent } from 'react-draggable';
@@ -12,16 +12,18 @@ import { Candidate } from './Candidate';
 
 interface Props {
   attachment: ImageAttachment
-  addAttachment?: (attachment: Attachment) => void;
+  onClick?: MouseEventHandler;
   scale?: number;
+  active?: boolean;
 }
 
 const IMAGE_MAX_SIZE = 90;
 export const CandidateImage = (
   {
     attachment,
-    addAttachment,
+    onClick,
     scale = 1,
+    active = false,
 }: Props) => {
   function getScaledImage(attachment: ImageAttachment): ImageAttachment{
     const { width, height } = scaleTo(
@@ -38,15 +40,15 @@ export const CandidateImage = (
     }
   }
 
+  const style = active? {
+    color: "#1eb99d",
+    borderStyle: 'solid',
+  } : {}
+
   return (
     <Candidate
-      onClick={e=>{
-        if(addAttachment)
-          addAttachment({
-            ...attachment,
-            id: uuid.v4()
-          })}
-      }
+      onClick={onClick}
+      style={style}
     >
       <Image
         {...getScaledImage(attachment)}

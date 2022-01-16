@@ -68,12 +68,21 @@ export const DraggableText = (
     setContent(value);
   };
 
-  function handleEdit(){
+  function handleEdit(e:React.MouseEvent){
+    e.stopPropagation()
     setEditing(true)
   }
 
-  const handleOk = () =>{
+  function handleOk (e:React.FocusEvent | React.MouseEvent){
+    e.stopPropagation()
     setEditing(false)
+  }
+
+  function handleRemoveText(e:React.MouseEvent){
+    if(removeText){
+      e.stopPropagation()
+      removeText();
+    }
   }
 
   const okButton =
@@ -113,7 +122,7 @@ export const DraggableText = (
       }}
     >
       <BsXCircleFill
-        onClick={removeText}
+        onClick={handleRemoveText}
         style={{
           cursor: 'pointer',
           color:'rgb(245, 101, 101)',

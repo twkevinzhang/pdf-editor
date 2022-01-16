@@ -16,7 +16,7 @@ import { Droppable } from '../containers/Droppable';
 import { Text } from './Text';
 import { Placements } from './Placements';
 import { Image } from './Image';
-import { scaleTo } from '../utils/helpers';
+import { scaleTo, whichPlacement } from '../utils/helpers';
 import { createPortal } from 'react-dom';
 
 interface Props {
@@ -41,6 +41,10 @@ export const Attachments: React.FC<Props> = (
 }) => {
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  attachments = attachments.map(a=>{
+    let placement= whichPlacement(a.x, a.y, placements)
+    return placement? getResizedAttachment(a, placement) : a
+  })
   const scaledAttachments: Attachment[] = attachments.map(a=>getScaledAttachment(a))
   const scaledPlacements: Placement[] = placements.map(p=>({
     ...p,
@@ -144,6 +148,30 @@ export const Attachments: React.FC<Props> = (
     }
   }
 
+  function getResizedAttachment(attachment: Attachment, placement: Placement): Attachment{
+    const { width, height } = scaleTo(
+      attachment.width,
+      attachment.height,
+      placement.width,
+      placement.height,
+    )
+
+    let x= placement.x;
+    let y= placement.y;
+    if(width < placement.width){
+      const space = placement.width - width;
+      x = placement.x + space / 2
+    }
+    return {
+      ...attachment,
+      x,
+      y,
+      column_id: placement.id,
+      width,
+      height,
+    } as Attachment
+  }
+
   return (
     <DndContext
       sensors={[mouseSensor]}
@@ -158,28 +186,8 @@ export const Attachments: React.FC<Props> = (
         const attachment = attachments.find(a=> a.id === draggingId)!
         let updated : Partial<Attachment>
         if(event.over){
-          const column_id = event.over.id
-          const placement= placements.find(p=> p.id === column_id)!
-          const { width, height } = scaleTo(
-            attachment.width,
-            attachment.height,
-            placement.width,
-            placement.height,
-          )
-
-          let x= placement.x;
-          let y= placement.y;
-          if(width < placement.width){
-            const space = placement.width - width;
-            x = placement.x + space / 2
-          }
-          updated = {
-            x,
-            y,
-            column_id,
-            width,
-            height,
-          }
+          const placement= placements.find(p=> p.id === event.over!.id)!
+          updated= getResizedAttachment(attachment, placement)
         }else{
           updated = {
             x: event.delta.x / scale + (attachment.x || 0)  - initialWindowScroll.x / scale,

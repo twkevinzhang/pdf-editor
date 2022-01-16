@@ -23,3 +23,22 @@ export const scaleTo = (
     height,
   };
 };
+
+export function whichPlacement(
+  x: number,
+  y: number,
+  placements: Placement[]
+): Placement | null {
+  const lasted = placements[placements.length - 1];
+  const arr = placements
+    .filter(
+      (p) =>
+        p.x < x &&
+        x < lasted.x + lasted.width &&
+        p.y < y &&
+        y < lasted.y + lasted.height
+    )
+    .sort((p1) => p1.x - x + (p1.y - y));
+  if (arr && arr.length) return arr[0];
+  return null;
+}

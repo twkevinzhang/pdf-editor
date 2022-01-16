@@ -111,7 +111,9 @@ const App: React.FC<{}> = () => {
         </Row>
         </>)}
         <Row>
-          <Col sm={3}>
+          <Col sm={3} style={{
+            position: 'fixed',
+          }}>
             {isPdfLoaded && (<>
               <h3>加入附件</h3>
               <p>
@@ -137,7 +139,10 @@ const App: React.FC<{}> = () => {
               </CandidateText>
             </>)}
           </Col>
-          <Col sm={9}>
+          <Col sm={9} style={{
+            position: 'relative',
+            left: "25%",
+          }}>
             <div className="pt-2 pb-2 d-flex justify-content-between" style={{
               width: dimensions?.width || 0,
             }}>

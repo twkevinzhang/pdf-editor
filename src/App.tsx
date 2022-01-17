@@ -21,7 +21,6 @@ import ReactInputPosition from "react-input-position";
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
-  const [ drawerWidth, setDrawerWidth ] = useState(350);
   const [ handleAttachment, setHandleAttachment ] = useState<Attachment | undefined>();
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
   const { allCandidates, removeAllImages, refresh: refreshDrawer } = useDrawer();
@@ -106,9 +105,6 @@ const App: React.FC<{}> = () => {
       {hiddenInputs}
 
       <Container fluid>
-      <div style={{
-        marginTop: '10px'
-      }}>
         {!isPdfLoaded && (<>
         <Row className='justify-content-center mt-lg-5'>
           <div>
@@ -118,11 +114,12 @@ const App: React.FC<{}> = () => {
         </Row>
         </>)}
         <Row>
-          <Col style={{
-            position: 'fixed',
-            width: drawerWidth,
-          }}>
-            {isPdfLoaded && (<>
+          <Col sm={3}>
+            {isPdfLoaded && (
+              <div className="flex-nowrap" style={{
+                overflowY: 'scroll',
+                height: '100vh',
+              }}>
               <h3>加入附件</h3>
               <p>
                 {message}
@@ -148,14 +145,12 @@ const App: React.FC<{}> = () => {
               <CandidateText scale={scale} onClick={handleImageUpload}>
                 上傳圖片
               </CandidateText>
-            </>)}
+            </div>)}
           </Col>
-          <Col style={{
-            position: 'relative',
-            left: drawerWidth,
-          }}>
-            <div className="pt-2 pb-2 d-flex justify-content-between" style={{
-              width: dimensions?.width || 0,
+          <Col sm={9} className='position-relative'>
+            <div className="d-flex justify-content-between align-items-center" style={{
+              height: '7vh',
+              minHeight: "40px",
             }}>
               <div>
                 <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
@@ -171,6 +166,11 @@ const App: React.FC<{}> = () => {
                 <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
               </div>
             </div>
+            <div className="row flex-nowrap" style={{
+              overflowX: 'scroll',
+              overflowY: 'scroll',
+              height: '93vh',
+            }}>
             { currentPage && (
               <ReactInputPosition
                 trackPassivePosition={true}
@@ -197,10 +197,9 @@ const App: React.FC<{}> = () => {
               </Scene>
               </ReactInputPosition>
             )}
+            </div>
           </Col>
         </Row>
-
-      </div>
       </Container>
     </div>
   );

@@ -85,6 +85,10 @@ export const DraggableText = (
     }
   }
 
+  function handleClick(e: React.MouseEvent){
+    e.stopPropagation()
+  }
+
   const okButton =
     <Stone
       position={{
@@ -150,6 +154,7 @@ export const DraggableText = (
         ...hiddenStyle
       }}
       onDoubleClick={handleEdit}
+      onClick={handleClick}
     >
       {editing ? okButton : deleteButton}
       <Text

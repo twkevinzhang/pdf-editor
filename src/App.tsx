@@ -41,7 +41,7 @@ const App: React.FC<{}> = () => {
     use: UploadTypes.IMAGE,
     afterUploadImage: (attachment: ImageAttachment)=>{
         saveImageFile(attachment.file, attachment.id).then(()=>refreshDrawer());
-        addAttachment(attachment)
+        setHandleAttachment(attachment)
       }
   });
 
@@ -60,7 +60,7 @@ const App: React.FC<{}> = () => {
       fontFamily: 'Times-Roman',
       text: 'Enter Text Here',
     };
-    addAttachment(newTextAttachment)
+    setHandleAttachment(newTextAttachment)
   };
 
   const handleSave = () => savePdf(allPageAttachments)

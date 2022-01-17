@@ -16,7 +16,7 @@ import { Droppable } from '../containers/Droppable';
 import { Text } from './Text';
 import { Placements } from './Placements';
 import { Image } from './Image';
-import { scaleTo, whichPlacement } from '../utils/helpers';
+import { getResizedAttachment, scaleTo, whichPlacement } from '../utils/helpers';
 import { createPortal } from 'react-dom';
 
 interface Props {
@@ -41,10 +41,6 @@ export const Attachments: React.FC<Props> = (
 }) => {
   const [initialWindowScroll, setInitialWindowScroll] = useState(defaultCoordinates);
   const [draggingId, setDraggingId] = useState<string | null>(null);
-  attachments = attachments.map(a=>{
-    let placement= whichPlacement(a.x, a.y, placements)
-    return placement? getResizedAttachment(a, placement) : a
-  })
   const scaledAttachments: Attachment[] = attachments.map(a=>getScaledAttachment(a))
   const scaledPlacements: Placement[] = placements.map(p=>({
     ...p,
@@ -146,30 +142,6 @@ export const Attachments: React.FC<Props> = (
       width: width * scale,
       height: height * scale,
     }
-  }
-
-  function getResizedAttachment(attachment: Attachment, placement: Placement): Attachment{
-    const { width, height } = scaleTo(
-      attachment.width,
-      attachment.height,
-      placement.width,
-      placement.height,
-    )
-
-    let x= placement.x;
-    let y= placement.y;
-    if(width < placement.width){
-      const space = placement.width - width;
-      x = placement.x + space / 2
-    }
-    return {
-      ...attachment,
-      x,
-      y,
-      column_id: placement.id,
-      width,
-      height,
-    } as Attachment
   }
 
   return (

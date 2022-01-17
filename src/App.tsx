@@ -14,10 +14,11 @@ import { useDrawer } from './hooks/useDrawer';
 import { BsChevronLeft, BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
 import { Scene } from './containers/Scene';
-import { scaleTo } from './utils/helpers';
+import { getResizedAttachment, scaleTo, whichPlacement } from './utils/helpers';
 import { CandidateText } from './containers/CandidateText';
 import { saveImageFile } from './utils/StorageService';
 import ReactInputPosition from "react-input-position";
+import { InPageClick } from './containers/InPageClick';
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
@@ -176,25 +177,29 @@ const App: React.FC<{}> = () => {
                 trackPassivePosition={true}
                 cursorStyle={handleAttachment ? undefined : 'default'}
               >
-              <Scene
-                currentPage={currentPage}
-                dimensions={dimensions}
-                setDimensions={setDimensions}
-                scale={scale}
-                handleAttachment={handleAttachment}
-                addAttachment={addAttachment}
+                <InPageClick
+                  handleAttachment={handleAttachment}
+                  addAttachment={addAttachment}
+                  scale={scale}
                 >
-                { dimensions && (
-                  <PageAttachments
-                    removeAttachment={removeAttachments}
-                    updateAttachment={updateAttachments}
-                    pageDimensions={dimensions}
-                    attachments={pageAttachments}
-                    placements={mockPlacements()}
+                  <Scene
+                    currentPage={currentPage}
+                    dimensions={dimensions}
+                    setDimensions={setDimensions}
                     scale={scale}
-                  />
-                )}
-              </Scene>
+                  >
+                    { dimensions && (
+                      <PageAttachments
+                        removeAttachment={removeAttachments}
+                        updateAttachment={updateAttachments}
+                        pageDimensions={dimensions}
+                        attachments={pageAttachments}
+                        placements={mockPlacements()}
+                        scale={scale}
+                      />
+                    )}
+                  </Scene>
+                </InPageClick>
               </ReactInputPosition>
             )}
             </div>

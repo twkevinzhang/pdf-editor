@@ -42,3 +42,32 @@ export function whichPlacement(
   if (arr && arr.length) return arr[0];
   return null;
 }
+
+export function getResizedAttachment(
+  attachment: Attachment,
+  placement: Placement
+): Attachment {
+  const { width, height } = scaleTo(
+    attachment.width,
+    attachment.height,
+    placement.width,
+    placement.height
+  );
+
+  let x = placement.x;
+  const y = placement.y;
+
+  // 置中
+  if (width < placement.width) {
+    const space = placement.width - width;
+    x = placement.x + space / 2;
+  }
+  return {
+    ...attachment,
+    x,
+    y,
+    column_id: placement.id,
+    width,
+    height,
+  } as Attachment;
+}

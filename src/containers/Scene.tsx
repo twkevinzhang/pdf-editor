@@ -11,43 +11,13 @@ interface Props {
   setDimensions?: ({ width, height }: Dimensions) => void;
   children?: React.ReactNode | null;
   scale?:number;
-  handleAttachment?: Attachment;
-  addAttachment?: (attachment: Attachment) => void;
-  active? : any,
-  activePosition? : any,
-  prevActivePosition? : any,
-  passivePosition? : any,
-  elementDimensions? : any,
-  elementOffset? : any,
-  itemPosition? : any,
 }
 
 export const Scene = (
   {
-    currentPage, dimensions, setDimensions ,children, scale = 1, handleAttachment, addAttachment,
-    active,
-    activePosition,
-    prevActivePosition,
-    passivePosition,
-    elementDimensions,
-    elementOffset,
-    itemPosition,
+    currentPage, dimensions, setDimensions ,children, scale = 1,
   }: Props) => {
-  const handleClick = ()=> {
-    if (handleAttachment && addAttachment) {
-      addAttachment({
-        ...handleAttachment,
-        id: uuid.v4(),
-        x: passivePosition.x / scale,
-        y: passivePosition.y / scale,
-      })
-    }
-  }
-
   return (
-    <div
-      onClick={handleClick}
-    >
     <Card
       style={{
         display: 'table', // for look more compact
@@ -61,6 +31,5 @@ export const Scene = (
       />
       {children}
     </Card>
-    </div>
   )
 };

@@ -51,6 +51,13 @@ export const DraggableImage = (
         resizeImage(strToInt(ref.style.width), strToInt(ref.style.height));
   }
 
+  function handleRemove(e:React.MouseEvent){
+    if(removeImage){
+      e.stopPropagation()
+      removeImage();
+    }
+  }
+
   const deleteButton =
     <Stone
       position={{
@@ -65,7 +72,7 @@ export const DraggableImage = (
       }}
     >
       <BsXCircleFill
-        onClick={removeImage}
+        onClick={handleRemove}
         style={{
           cursor: 'pointer',
           color:'rgb(245, 101, 101)',

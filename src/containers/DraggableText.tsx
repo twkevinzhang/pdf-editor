@@ -12,7 +12,7 @@ interface Props {
   pageHeight: number;
   removeText?: () => void;
   updateTextAttachment?: (textObject: Partial<TextAttachment>) => void;
-  size?: number,
+  fontSize?: number,
   lineHeight?: number,
   fontFamily?: string,
   hidden?: boolean,
@@ -28,7 +28,7 @@ export const DraggableText = (
    pageWidth,
    removeText,
    updateTextAttachment,
-    size,
+    fontSize,
     lineHeight,
     fontFamily,
     hidden = false,
@@ -68,12 +68,25 @@ export const DraggableText = (
     setContent(value);
   };
 
-  function handleEdit(){
+  function handleEdit(e:React.MouseEvent){
+    e.stopPropagation()
     setEditing(true)
   }
 
-  const handleOk = () =>{
+  function handleOk (e:React.FocusEvent | React.MouseEvent){
+    e.stopPropagation()
     setEditing(false)
+  }
+
+  function handleRemoveText(e:React.MouseEvent){
+    if(removeText){
+      e.stopPropagation()
+      removeText();
+    }
+  }
+
+  function handleClick(e: React.MouseEvent){
+    e.stopPropagation()
   }
 
   const okButton =
@@ -113,7 +126,7 @@ export const DraggableText = (
       }}
     >
       <BsXCircleFill
-        onClick={removeText}
+        onClick={handleRemoveText}
         style={{
           cursor: 'pointer',
           color:'rgb(245, 101, 101)',
@@ -141,6 +154,7 @@ export const DraggableText = (
         ...hiddenStyle
       }}
       onDoubleClick={handleEdit}
+      onClick={handleClick}
     >
       {editing ? okButton : deleteButton}
       <Text
@@ -149,7 +163,7 @@ export const DraggableText = (
         draggableAttrs={draggableAttrs}
         onBlur={handleOk}
         text={content}
-        size={size}
+        fontSize={fontSize}
         lineHeight= { lineHeight }
         fontFamily={fontFamily}
         editing={editing}

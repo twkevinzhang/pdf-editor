@@ -25,10 +25,7 @@ export const useDrawer = () => {
 
   return {
     allCandidates: allCandidates,
-    saveImage: async (newAttachment: ImageAttachment) => {
-      await saveImageFile(newAttachment.file, newAttachment.id);
-      refresh();
-    },
+    refresh,
     removeAllImages: async () => {
       await removeAllImageFiles();
       refresh();

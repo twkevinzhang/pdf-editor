@@ -9,6 +9,8 @@ declare interface Window {
   ) => W3Color;
 }
 
+declare module 'react-input-position';
+
 type AttachmentType = 'image' | 'text';
 
 interface AttachmentBase {
@@ -35,7 +37,7 @@ interface DrawingAttachment extends AttachmentBase {
 interface TextAttachment extends AttachmentBase {
   text?: string;
   fontFamily?: string;
-  size?: number;
+  fontSize?: number;
   lineHeight?: number;
   lines?: string[];
 }

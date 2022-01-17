@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Pdf, usePdf } from './hooks/usePdf';
-import { Button, Col, Container, Nav, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
 import { Attachments as PageAttachments } from './components/Attachments';
 import { UploadTypes, useUploader } from './hooks/useUploader';
 import uuid from 'uuid';
-import { CandidateImage } from './containers/CandidateImage';
+import { CandidateImage } from './components/CandidateImage';
 import { useDrawer } from './hooks/useDrawer';
 
 import { BsChevronLeft, BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
-import { Scene } from './containers/Scene';
-import { scaleTo } from './utils/helpers';
-import { CandidateText } from './containers/CandidateText';
+import { getResizedAttachment, scaleTo, whichPlacement } from './utils/helpers';
+import { CandidateText } from './components/CandidateText';
+import { saveImageFile } from './utils/StorageService';
+import ReactInputPosition from "react-input-position";
+import { InPageClick } from './components/InPageClick';
+import { Page } from './components/Page';
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
+  const [ handleAttachment, setHandleAttachment ] = useState<Attachment | undefined>();
   const { file, setPdf, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, savePdf, previousPage, nextPage, setDimensions, name, dimensions } = usePdf();
-  const { saveImage, allCandidates, removeAllImages } = useDrawer();
+  const { allCandidates, removeAllImages, refresh: refreshDrawer } = useDrawer();
   const { addAttachment, allPageAttachments, pageAttachments, resetAttachments, updateAttachments, removeAttachments, setPageIndex } = useAttachments();
   const isPdfLoaded = !!file
 
@@ -36,8 +40,8 @@ const App: React.FC<{}> = () => {
   const { inputRef: imgRef, handleUpload: handleImageUpload, fileOnChange: imgOnChange } = useUploader({
     use: UploadTypes.IMAGE,
     afterUploadImage: (attachment: ImageAttachment)=>{
-        saveImage(attachment).then()
-        addAttachment(attachment)
+        saveImageFile(attachment.file, attachment.id).then(()=>refreshDrawer());
+        setHandleAttachment(attachment)
       }
   });
 
@@ -51,15 +55,18 @@ const App: React.FC<{}> = () => {
       y: 0,
       width: 120,
       height: 25,
-      size: 16,
+      fontSize: 16,
       lineHeight: 1.4,
       fontFamily: 'Times-Roman',
       text: 'Enter Text Here',
     };
-    addAttachment(newTextAttachment)
+    setHandleAttachment(newTextAttachment)
   };
 
   const handleSave = () => savePdf(allPageAttachments)
+
+  const message =
+    handleAttachment? "點擊 PDF 的某處來新增附件": "這些圖片被儲存在 local 的 IndexedDB。"
 
   const hiddenInputs = (
     <>
@@ -99,9 +106,6 @@ const App: React.FC<{}> = () => {
       {hiddenInputs}
 
       <Container fluid>
-      <div style={{
-        marginTop: '10px'
-      }}>
         {!isPdfLoaded && (<>
         <Row className='justify-content-center mt-lg-5'>
           <div>
@@ -112,10 +116,14 @@ const App: React.FC<{}> = () => {
         </>)}
         <Row>
           <Col sm={3}>
-            {isPdfLoaded && (<>
+            {isPdfLoaded && (
+              <div className="flex-nowrap" style={{
+                overflowY: 'scroll',
+                height: '100vh',
+              }}>
               <h3>加入附件</h3>
               <p>
-                這些圖片被儲存在 local 的 IndexedDB。
+                {message}
                 <Button variant="link" onClick={removeAllImages}>清空圖片</Button>
               </p>
               <CandidateText scale={scale} onClick={handleText}>
@@ -126,8 +134,11 @@ const App: React.FC<{}> = () => {
                 .map(attachment=>{
                   return <CandidateImage
                     key={attachment.id}
+                    active={handleAttachment?.id === attachment.id}
+                    onClick={()=>{
+                      setHandleAttachment(attachment)
+                    }}
                     attachment={attachment as ImageAttachment}
-                    addAttachment={addAttachment}
                     scale={scale}
                   />
                 })
@@ -135,11 +146,12 @@ const App: React.FC<{}> = () => {
               <CandidateText scale={scale} onClick={handleImageUpload}>
                 上傳圖片
               </CandidateText>
-            </>)}
+            </div>)}
           </Col>
-          <Col sm={9}>
-            <div className="pt-2 pb-2 d-flex justify-content-between" style={{
-              width: dimensions?.width || 0,
+          <Col sm={9} className='position-relative'>
+            <div className="d-flex justify-content-between align-items-center" style={{
+              height: '7vh',
+              minHeight: "40px",
             }}>
               <div>
                 <Button style={previousButtonStyle} className='rounded-circle' variant="outline-dark" onClick={previousPage}><BsChevronLeft /></Button>
@@ -155,29 +167,49 @@ const App: React.FC<{}> = () => {
                 <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
               </div>
             </div>
+            <div className="row flex-nowrap" style={{
+              overflowX: 'scroll',
+              overflowY: 'scroll',
+              height: '93vh',
+            }}>
             { currentPage && (
-              <Scene
-                currentPage={currentPage}
-                dimensions={dimensions}
-                setDimensions={setDimensions}
-                scale={scale}
+              <ReactInputPosition
+                trackPassivePosition={true}
+                cursorStyle={handleAttachment ? undefined : 'default'}
+              >
+                <InPageClick
+                  handleAttachment={handleAttachment}
+                  addAttachment={addAttachment}
+                  scale={scale}
                 >
-                { dimensions && (
-                  <PageAttachments
-                    removeAttachment={removeAttachments}
-                    updateAttachment={updateAttachments}
-                    pageDimensions={dimensions}
-                    attachments={pageAttachments}
-                    placements={mockPlacements()}
-                    scale={scale}
-                  />
-                )}
-              </Scene>
+                  <Card
+                    style={{
+                      display: 'table', // for look more compact
+                    }}
+                  >
+                    <Page
+                      dimensions={dimensions}
+                      setDimensions={setDimensions}
+                      page={currentPage}
+                      scale={scale}
+                    />
+                    { dimensions && (
+                      <PageAttachments
+                        removeAttachment={removeAttachments}
+                        updateAttachment={updateAttachments}
+                        pageDimensions={dimensions}
+                        attachments={pageAttachments}
+                        placements={mockPlacements()}
+                        scale={scale}
+                      />
+                    )}
+                  </Card>
+                </InPageClick>
+              </ReactInputPosition>
             )}
+            </div>
           </Col>
         </Row>
-
-      </div>
       </Container>
     </div>
   );

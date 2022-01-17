@@ -50,17 +50,17 @@ export async function save(
           throw e;
         }
       } else if (object.type === 'text') {
-        const { x, y, text, lineHeight, size, fontFamily, width } =
+        const { x, y, text, lineHeight, fontSize, fontFamily, width } =
           object as TextAttachment;
         const pdfFont = await pdfDoc.embedFont(fontFamily);
         return () =>
           page.drawText(text, {
-            maxWidth: width,
+            // maxWidth: width,
             font: pdfFont,
-            size,
+            size: fontSize,
             lineHeight,
             x,
-            y: pageHeight - size! - y,
+            y: pageHeight - fontSize! - y,
           });
       }
     });

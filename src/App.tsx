@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Pdf, usePdf } from './hooks/usePdf';
-import { Button, Col, Container, Nav, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Nav, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAttachments } from './hooks/useAttachments';
 import { AttachmentTypes } from './entities';
@@ -13,12 +13,12 @@ import { useDrawer } from './hooks/useDrawer';
 
 import { BsChevronLeft, BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
-import { Scene } from './containers/Scene';
 import { getResizedAttachment, scaleTo, whichPlacement } from './utils/helpers';
 import { CandidateText } from './containers/CandidateText';
 import { saveImageFile } from './utils/StorageService';
 import ReactInputPosition from "react-input-position";
 import { InPageClick } from './containers/InPageClick';
+import { Page } from './components/Page';
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
@@ -182,12 +182,17 @@ const App: React.FC<{}> = () => {
                   addAttachment={addAttachment}
                   scale={scale}
                 >
-                  <Scene
-                    currentPage={currentPage}
-                    dimensions={dimensions}
-                    setDimensions={setDimensions}
-                    scale={scale}
+                  <Card
+                    style={{
+                      display: 'table', // for look more compact
+                    }}
                   >
+                    <Page
+                      dimensions={dimensions}
+                      setDimensions={setDimensions}
+                      page={currentPage}
+                      scale={scale}
+                    />
                     { dimensions && (
                       <PageAttachments
                         removeAttachment={removeAttachments}
@@ -198,7 +203,7 @@ const App: React.FC<{}> = () => {
                         scale={scale}
                       />
                     )}
-                  </Scene>
+                  </Card>
                 </InPageClick>
               </ReactInputPosition>
             )}

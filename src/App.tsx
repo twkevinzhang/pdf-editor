@@ -8,16 +8,16 @@ import { AttachmentTypes } from './entities';
 import { Attachments as PageAttachments } from './components/Attachments';
 import { UploadTypes, useUploader } from './hooks/useUploader';
 import uuid from 'uuid';
-import { CandidateImage } from './containers/CandidateImage';
+import { CandidateImage } from './components/CandidateImage';
 import { useDrawer } from './hooks/useDrawer';
 
 import { BsChevronLeft, BsChevronRight, BsFillCloudDownloadFill, BsFillCloudUploadFill } from 'react-icons/bs';
 import { mockPlacements } from './models/MockPlacements';
 import { getResizedAttachment, scaleTo, whichPlacement } from './utils/helpers';
-import { CandidateText } from './containers/CandidateText';
+import { CandidateText } from './components/CandidateText';
 import { saveImageFile } from './utils/StorageService';
 import ReactInputPosition from "react-input-position";
-import { InPageClick } from './containers/InPageClick';
+import { InPageClick } from './components/InPageClick';
 import { Page } from './components/Page';
 
 const App: React.FC<{}> = () => {

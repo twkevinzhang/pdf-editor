@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, createRef, useReducer, MouseEventHandler } from 'react';
-import { Image, Image as Component } from '../components/Image';
+import { Image, Image as Component } from './Image';
 import { Position, ResizableDelta, Rnd } from 'react-rnd';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import { Direction } from 're-resizable/lib/resizer';
-import { DraggableImage } from './DraggableImage';
+import { DraggableImage } from '../containers/DraggableImage';
 import { readAsDataURL, readAsImage } from '../utils/asyncReader';
 import uuid from 'uuid';
 import { AttachmentTypes } from '../entities';

@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
-import { Page } from '../components/Page';
-import { Attachments } from '../components/Attachments';
+import { Page } from './Page';
+import { Attachments } from './Attachments';
 import { mockPlacements } from '../models/MockPlacements';
 import { Card } from 'react-bootstrap';
 import uuid from 'uuid';

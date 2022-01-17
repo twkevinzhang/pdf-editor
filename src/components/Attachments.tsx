@@ -123,7 +123,7 @@ export const Attachments: React.FC<Props> = (
       y: attachment.y * scale,
       width: attachment.width * scale,
       height: attachment.height * scale,
-      size: attachment.size? attachment.size * scale : undefined,
+      fontSize: attachment.fontSize? attachment.fontSize * scale : undefined,
     }
   }
 

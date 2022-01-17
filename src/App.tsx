@@ -55,7 +55,7 @@ const App: React.FC<{}> = () => {
       y: 0,
       width: 120,
       height: 25,
-      size: 16,
+      fontSize: 16,
       lineHeight: 1.4,
       fontFamily: 'Times-Roman',
       text: 'Enter Text Here',

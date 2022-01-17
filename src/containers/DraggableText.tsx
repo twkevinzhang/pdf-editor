@@ -12,7 +12,7 @@ interface Props {
   pageHeight: number;
   removeText?: () => void;
   updateTextAttachment?: (textObject: Partial<TextAttachment>) => void;
-  size?: number,
+  fontSize?: number,
   lineHeight?: number,
   fontFamily?: string,
   hidden?: boolean,
@@ -28,7 +28,7 @@ export const DraggableText = (
    pageWidth,
    removeText,
    updateTextAttachment,
-    size,
+    fontSize,
     lineHeight,
     fontFamily,
     hidden = false,
@@ -163,7 +163,7 @@ export const DraggableText = (
         draggableAttrs={draggableAttrs}
         onBlur={handleOk}
         text={content}
-        size={size}
+        fontSize={fontSize}
         lineHeight= { lineHeight }
         fontFamily={fontFamily}
         editing={editing}

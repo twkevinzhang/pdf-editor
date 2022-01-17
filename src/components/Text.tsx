@@ -9,12 +9,13 @@ interface Props {
   editing?: boolean;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChangeText?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  size?: number;
+  fontSize?: number;
   lineHeight?: number;
   fontFamily?: string;
   style?: CSSProperties;
 }
 
+const MIN_WIDTH = 5;
 export const Text = forwardRef<HTMLInputElement, Props>((
     {
       listeners,
@@ -23,7 +24,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
       onChangeText,
       editing = false,
       text,
-      size,
+      fontSize,
       lineHeight,
       fontFamily,
       style,
@@ -35,6 +36,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
     ...draggableAttrs,
   }
 
+  const size = (text?.length || 0) < MIN_WIDTH ? MIN_WIDTH : text?.length
   return (
         <input
           type="text"
@@ -43,7 +45,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
           onChange={onChangeText}
           readOnly={!editing}
           style={{
-            fontSize: size,
+            fontSize,
             lineHeight,
             fontFamily,
             outline: 'none',
@@ -55,7 +57,7 @@ export const Text = forwardRef<HTMLInputElement, Props>((
             ...style,
           }}
           value={text}
-          size={text?.length || 5}
+          size={size}
           {...(editing? {} : dragAttrs)}
         />
     );

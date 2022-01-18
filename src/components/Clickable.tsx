@@ -14,7 +14,7 @@ interface Props {
   addAttachment?: (attachment: Attachment) => void;
   scale?: number;
 }
-export const InPageClick = (
+export const Clickable = (
   {
     children,
     onClick,

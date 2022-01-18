@@ -17,7 +17,7 @@ import { getResizedAttachment, scaleTo, whichPlacement } from './utils/helpers';
 import { CandidateText } from './components/CandidateText';
 import { saveImageFile } from './utils/StorageService';
 import ReactInputPosition from "react-input-position";
-import { InPageClick } from './components/InPageClick';
+import { Clickable } from './components/Clickable';
 import { Page } from './components/Page';
 import { Scrollable } from './components/Scrollable';
 
@@ -174,7 +174,7 @@ const App: React.FC<{}> = () => {
                 trackPassivePosition={true}
                 cursorStyle={handleAttachment ? undefined : 'default'}
               >
-                <InPageClick
+                <Clickable
                   handleAttachment={handleAttachment}
                   addAttachment={addAttachment}
                   scale={scale}
@@ -200,7 +200,7 @@ const App: React.FC<{}> = () => {
                         scale={scale} />
                     )}
                   </Card>
-                </InPageClick>
+                </Clickable>
               </ReactInputPosition>
             )}
             </Scrollable>

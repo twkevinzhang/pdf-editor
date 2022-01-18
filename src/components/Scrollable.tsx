@@ -1,7 +1,7 @@
 import React, { createRef, CSSProperties, FocusEventHandler, forwardRef, ReactNode } from 'react';
 import classNames from 'classnames';
 import type {DraggableSyntheticListeners, Translate} from '@dnd-kit/core';
-import { MouseContext } from './MouseContext';
+import { MouseContext } from '../contexts/MouseContext';
 import { ScrollContext } from '../contexts/ScrollContext';
 import { defaultCoordinates } from '@dnd-kit/core';
 

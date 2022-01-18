@@ -5,7 +5,7 @@ import { mockPlacements } from '../models/MockPlacements';
 import { Card } from 'react-bootstrap';
 import uuid from 'uuid';
 import { getResizedAttachment, whichPlacement } from '../utils/helpers';
-import { MouseContext } from './MouseContext';
+import { MouseContext } from '../contexts/MouseContext';
 
 interface Props {
   children?: React.ReactNode | null;

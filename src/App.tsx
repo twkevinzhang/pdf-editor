@@ -19,6 +19,7 @@ import { saveImageFile } from './utils/StorageService';
 import ReactInputPosition from "react-input-position";
 import { InPageClick } from './components/InPageClick';
 import { Page } from './components/Page';
+import { Scrollable } from './components/Scrollable';
 
 const App: React.FC<{}> = () => {
   const [ scale, setScale ] = useState(1.65);
@@ -167,11 +168,7 @@ const App: React.FC<{}> = () => {
                 <Button style={nextPageStyle} className='rounded-circle' variant="outline-dark" onClick={nextPage}><BsChevronRight /></Button>
               </div>
             </div>
-            <div className="row flex-nowrap" style={{
-              overflowX: 'scroll',
-              overflowY: 'scroll',
-              height: '93vh',
-            }}>
+            <Scrollable>
             { currentPage && (
               <ReactInputPosition
                 trackPassivePosition={true}
@@ -200,14 +197,13 @@ const App: React.FC<{}> = () => {
                         pageDimensions={dimensions}
                         attachments={pageAttachments}
                         placements={mockPlacements()}
-                        scale={scale}
-                      />
+                        scale={scale} />
                     )}
                   </Card>
                 </InPageClick>
               </ReactInputPosition>
             )}
-            </div>
+            </Scrollable>
           </Col>
         </Row>
       </Container>

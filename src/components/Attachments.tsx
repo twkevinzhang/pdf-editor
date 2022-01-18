@@ -2,6 +2,7 @@ import React, { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { AttachmentTypes } from '../entities';
 import { DraggableText } from '../containers/DraggableText';
 import { DraggableImage } from '../containers/DraggableImage';
+import { ScrollContext } from '../contexts/ScrollContext';
 import {
   defaultCoordinates,
   DndContext, DragOverlay,
@@ -144,49 +145,53 @@ export const Attachments: React.FC<Props> = (
   }
 
   return (
-    <DndContext
-      sensors={[mouseSensor]}
-      onDragStart={event => {
-        setDraggingId(event.active.id)
-        setInitialWindowScroll({
-          x: window.scrollX,
-          y: window.scrollY,
-        });
-      }}
-      onDragEnd={event => {
-        const attachment = attachments.find(a=> a.id === draggingId)!
-        let updated : Partial<Attachment>
-        if(event.over){
-          const placement= placements.find(p=> p.id === event.over!.id)!
-          updated= getResizedAttachment(attachment, placement)
-        }else{
-          updated = {
-            x: event.delta.x / scale + (attachment.x || 0)  - initialWindowScroll.x / scale,
-            y: event.delta.y / scale + (attachment.y || 0)  - initialWindowScroll.y / scale,
-            column_id: undefined,
-          }
-        }
-        handleAttachmentUpdate(event.active.id)(updated)
-        setDraggingId(null)
-      }}
-      onDragCancel={() => setDraggingId(null)}
-    >
-      <Placements
-        placements={scaledPlacements}
-        attachments={attachments}
-      />
+    <ScrollContext.Consumer>
+      {ref =>(
+        <DndContext
+          sensors={[mouseSensor]}
+          onDragStart={event => {
+            setDraggingId(event.active.id)
+            setInitialWindowScroll({
+              x: ref?.current?.scrollLeft || 0,
+              y: ref?.current?.scrollTop || 0,
+            });
+          }}
+          onDragEnd={event => {
+            const attachment = attachments.find(a=> a.id === draggingId)!
+            let updated : Partial<Attachment>
+            if(event.over){
+              const placement= placements.find(p=> p.id === event.over!.id)!
+              updated= getResizedAttachment(attachment, placement)
+            }else{
+              updated = {
+                x: (event.delta.x - initialWindowScroll.x) / scale + (attachment.x || 0),
+                y: (event.delta.y - initialWindowScroll.y) / scale + (attachment.y || 0),
+                column_id: undefined,
+              }
+            }
+            handleAttachmentUpdate(event.active.id)(updated)
+            setDraggingId(null)
+          }}
+          onDragCancel={() => setDraggingId(null)}
+        >
+          <Placements
+            placements={scaledPlacements}
+            attachments={attachments}
+          />
 
-      {scaledAttachments.map(a => {
-        const key = a.id;
-        return getAttachmentJsx(a, key)
-      })}
+          {scaledAttachments.map(a => {
+            const key = a.id;
+            return getAttachmentJsx(a, key)
+          })}
 
-      {createPortal(
-        <DragOverlay>
-          {snapshot}
-        </DragOverlay>,
-        document.body
+          {createPortal(
+            <DragOverlay>
+              {snapshot}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
       )}
-    </DndContext>
+    </ScrollContext.Consumer>
   )
 };

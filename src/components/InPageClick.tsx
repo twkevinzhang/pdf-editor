@@ -5,22 +5,15 @@ import { mockPlacements } from '../models/MockPlacements';
 import { Card } from 'react-bootstrap';
 import uuid from 'uuid';
 import { getResizedAttachment, whichPlacement } from '../utils/helpers';
+import { MouseContext } from './MouseContext';
 
 interface Props {
   children?: React.ReactNode | null;
   onClick?: (x: number, y: number) => void;
   handleAttachment?: Attachment;
   addAttachment?: (attachment: Attachment) => void;
-  scale: number;
-  active? : any,
-  activePosition? : any,
-  prevActivePosition? : any,
-  passivePosition? : any,
-  elementDimensions? : any,
-  elementOffset? : any,
-  itemPosition? : any,
+  scale?: number;
 }
-
 export const InPageClick = (
   {
     children,
@@ -28,16 +21,11 @@ export const InPageClick = (
     handleAttachment,
     addAttachment,
     scale =1,
-    active,
-    activePosition,
-    prevActivePosition,
-    passivePosition,
-    elementDimensions,
-    elementOffset,
-    itemPosition,
-  }: Props) => {
+    ...event
+  }: Props & Partial<MyMouseEvent>) => {
   const handleClick = ()=> {
-    let { x, y } = passivePosition
+    if(!event.passivePosition) return
+    let { x, y } = event.passivePosition
     if (handleAttachment && addAttachment) {
       x = x/scale
       y = y/scale
@@ -58,11 +46,13 @@ export const InPageClick = (
       }
     }
     if(onClick)
-      onClick(passivePosition.x, passivePosition.y)
+      onClick(event.passivePosition.x, event.passivePosition.y)
   }
   return <div
     onClick={handleClick}
   >
-    {children}
+    <MouseContext.Provider value={event as MyMouseEvent}>
+      {children}
+    </MouseContext.Provider>
   </div>
 };

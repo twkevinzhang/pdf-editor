@@ -10,6 +10,39 @@ declare interface Window {
 }
 
 declare module 'react-input-position';
+interface MyMouseEvent {
+  active: boolean,
+  activePosition: {
+    x: number,
+    y: number
+  },
+  prevActivePosition: {
+    x: number,
+    y: number
+  },
+  passivePosition: {
+    x: number,
+    y: number
+  },
+  elementDimensions: {
+    width: number,
+    height: number
+  },
+  elementOffset: {
+    left: number,
+    top: number
+  },
+  itemPosition: {
+    x: number,
+    y: number
+  },
+  itemDimensions: {
+    width: number,
+    height: number
+  },
+  itemRef: React.Ref,
+  onLoadRefresh: function
+}
 
 type AttachmentType = 'image' | 'text';
 

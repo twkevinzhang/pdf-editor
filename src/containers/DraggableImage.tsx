@@ -58,6 +58,10 @@ export const DraggableImage = (
     }
   }
 
+  function onClick(e: React.MouseEvent){
+    e.stopPropagation()
+  }
+
   const deleteButton =
     <Stone
       position={{
@@ -98,6 +102,7 @@ export const DraggableImage = (
         'top': `${y ?? 0}px`,
         ...hiddenStyle,
       }}
+      onClick={onClick}
     >
       <Resizable
         size={{

@@ -61,11 +61,10 @@ export const useUploader = ({
   };
 };
 
-export async function fileToImage(file: File): Promise<ImageAttachment> {
+export async function fileToImage(file: File, id: string = uuid.v4()): Promise<ImageAttachment> {
   try {
     const url = await readAsDataURL(file);
     const img = await readAsImage(url as string);
-    const id = uuid.v4();
     const { width, height } = img;
 
     return {

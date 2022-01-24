@@ -96,6 +96,7 @@ export const DraggableImage = (
 
   return (
     <div
+      id={id}
       style={{
         position: "absolute",
         'left': `${x ?? 0}px`,

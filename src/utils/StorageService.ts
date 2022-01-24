@@ -1,4 +1,5 @@
 import { openDB, DBSchema } from 'idb';
+import { fileToImage } from '../hooks/useUploader';
 
 const IMAGES_TABLE_NAME = 'imageFiles';
 const PDFS_TABLE_NAME = 'pdfs';
@@ -35,9 +36,15 @@ export async function saveImageFile(value: File, key: string) {
   return await db.put(IMAGES_TABLE_NAME, value, key);
 }
 
-export async function getAllImageFiles() {
+export async function getAllImages() {
   const db = await dbPromise;
-  return await db.getAll(IMAGES_TABLE_NAME);
+  const keys = await db.getAllKeys(IMAGES_TABLE_NAME);
+  return await Promise.all(
+    keys.map(async key => {
+      const file = await db.get(IMAGES_TABLE_NAME, key)
+      return await fileToImage(file!, key);
+    })
+  );
 }
 
 export async function removeAllImageFiles() {
@@ -54,10 +61,4 @@ export async function savePdfFile(value: File, key: string) {
 export async function getAllPdfFiles() {
   const db = await dbPromise;
   return await db.getAll(PDFS_TABLE_NAME);
-}
-
-export async function removeAllPdfFiles() {
-  const db = await dbPromise;
-  await db.deleteObjectStore(PDFS_TABLE_NAME);
-  await db.createObjectStore(PDFS_TABLE_NAME);
 }

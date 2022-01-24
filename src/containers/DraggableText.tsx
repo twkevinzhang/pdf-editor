@@ -155,6 +155,7 @@ export const DraggableText = (
       }}
       onDoubleClick={handleEdit}
       onClick={handleClick}
+      id={id}
     >
       {editing ? okButton : deleteButton}
       <Text

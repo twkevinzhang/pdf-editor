@@ -41,7 +41,7 @@ export const CandidateImage = (
   }
 
   const style = active? {
-    color: "#1eb99d",
+    borderColor: "#1eb99d",
     borderStyle: 'solid',
   } : {}
 

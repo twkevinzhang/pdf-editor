@@ -85,6 +85,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableImage
           key={key}
+          id={key}
           hidden={draggingId === attachment.id}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}
@@ -97,6 +98,7 @@ export const Attachments: React.FC<Props> = (
       return (
         <DraggableText
           key={key}
+          id={key}
           hidden={draggingId === attachment.id}
           pageWidth={pageDimensions.width}
           pageHeight={pageDimensions.height}

@@ -127,13 +127,17 @@ const App: React.FC<{}> = () => {
                 {message}
                 <Button variant="link" onClick={removeAllImages}>清空圖片</Button>
               </p>
-              <CandidateText scale={scale} onClick={handleText}>
+              <CandidateText
+                active={handleAttachment?.type === AttachmentTypes.TEXT}
+                scale={scale}
+                onClick={handleText}>
                 新增文字
               </CandidateText>
               {allCandidates
                 .filter(attachment=>attachment.type === AttachmentTypes.IMAGE)
                 .map(attachment=>{
-                  return <CandidateImage
+                  console.log(handleAttachment?.id)
+                  return <div id={attachment.id}><CandidateImage
                     key={attachment.id}
                     active={handleAttachment?.id === attachment.id}
                     onClick={()=>{
@@ -141,7 +145,7 @@ const App: React.FC<{}> = () => {
                     }}
                     attachment={attachment as ImageAttachment}
                     scale={scale}
-                  />
+                  /></div>
                 })
               }
               <CandidateText scale={scale} onClick={handleImageUpload}>

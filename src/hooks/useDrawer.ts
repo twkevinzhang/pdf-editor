@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useState, useEffect } from 'react';
 import {
-  getAllImageFiles,
+  getAllImages,
   removeAllImageFiles,
   saveImageFile,
 } from '../utils/StorageService';
@@ -12,10 +12,7 @@ export const useDrawer = () => {
 
   useEffect(() => {
     async function func() {
-      const files = await getAllImageFiles();
-      const images = await Promise.all(
-        files.map(async (file) => await fileToImage(file))
-      );
+      const images = await getAllImages();
       setAllCandidates(images);
     }
     func().then();

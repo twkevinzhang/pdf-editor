@@ -29,6 +29,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "tsc && vite build",
+    "test": "vitest run",
     "preview": "vite preview",
     "lint": "eslint --ignore-path .gitignore 'src/**/*.ts' --color --fix",
     "prettier": "prettier --write **/**/*.{ts,tsx,json,md}"
@@ -80,7 +81,8 @@
     "eslint-plugin-react-refresh": "^0.4.26",
     "gh-pages": "^3.2.3",
     "prettier": "^2.0.5",
-    "vite": "5"
+    "vite": "5",
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -18,14 +18,17 @@ export const Theme = {
   shadows: {
     soft: '0 4px 12px rgba(0, 0, 0, 0.05)',
     medium: '0 8px 24px rgba(0, 0, 0, 0.1)',
-  }
+  },
 };
 
 export const MainLayout = styled.div`
   display: flex;
   height: 100vh;
+  min-width: 0;
+  overflow: hidden;
   background-color: ${Theme.colors.background};
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
 `;
 
 export const SidebarLayout = styled.aside`
@@ -40,17 +43,28 @@ export const SidebarLayout = styled.aside`
 
 export const CanvasArea = styled.main`
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
-  padding: 40px;
+  padding: 96px 32px 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 980px) {
+    padding: 92px 20px 48px;
+  }
+
+  @media (max-width: 700px) {
+    padding: 88px 12px 300px;
+  }
 `;
 
 export const UIButton = styled.button<{ $primary?: boolean }>`
-  background: ${props => props.$primary ? Theme.colors.primary : 'transparent'};
-  color: ${props => props.$primary ? '#fff' : Theme.colors.primary};
-  border: ${props => props.$primary ? 'none' : `1px solid ${Theme.colors.primary}`};
+  background: ${(props) =>
+    props.$primary ? Theme.colors.primary : 'transparent'};
+  color: ${(props) => (props.$primary ? '#fff' : Theme.colors.primary)};
+  border: ${(props) =>
+    props.$primary ? 'none' : `1px solid ${Theme.colors.primary}`};
   padding: 10px 20px;
   border-radius: ${Theme.radius.medium};
   font-size: 14px;
@@ -58,12 +72,17 @@ export const UIButton = styled.button<{ $primary?: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
 
-  &:hover {
+  &:not(:disabled):hover {
     opacity: 0.8;
     transform: translateY(-1px);
   }
 
-  &:active {
+  &:not(:disabled):active {
     transform: translateY(0);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
   }
 `;

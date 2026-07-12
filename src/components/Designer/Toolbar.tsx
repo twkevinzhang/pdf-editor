@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import {
   Calendar,
+  ArrowRight,
   CheckCircle2,
   Download,
   FileSignature,
@@ -113,6 +114,20 @@ const ExportButton = styled(UIButton)`
   }
 `;
 
+const ContinueButton = styled(UIButton)`
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+
+  @media (max-width: 700px) {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+`;
+
 const StatusMessage = styled.div<{ $error?: boolean }>`
   position: absolute;
   top: calc(100% + 8px);
@@ -147,7 +162,16 @@ const TOOLS: Array<{
   },
 ];
 
-export const DesignerToolbar: React.FC = () => {
+interface DesignerToolbarProps {
+  /** Present only for the guided Start workflow. */
+  onContinueToSigner?: (templateFile: File) => Promise<void>;
+  isTransitioning?: boolean;
+}
+
+export const DesignerToolbar: React.FC<DesignerToolbarProps> = ({
+  onContinueToSigner,
+  isTransitioning = false,
+}) => {
   const {
     activeTool,
     setActiveTool,
@@ -172,24 +196,33 @@ export const DesignerToolbar: React.FC = () => {
   const hasValidationErrors = Object.keys(validationErrors).length > 0;
   const isComplete = !hasValidationErrors;
 
-  const handleExportPdf = async () => {
-    if (!file || !appMode) return;
+  const confirmExistingSignatureChange = () => {
     const hasExistingSignature = warnings.some((warning) =>
       warning.toLowerCase().includes('digital signature')
     );
-    if (
-      hasExistingSignature &&
-      !window.confirm(
+    return (
+      !hasExistingSignature ||
+      window.confirm(
         '這份 PDF 含有既有數位簽章。任何匯出變更都可能使簽章失效，仍要繼續嗎？'
       )
-    ) {
-      return;
-    }
+    );
+  };
+
+  const generatePdf = async (): Promise<Uint8Array | null> => {
+    if (!file || !appMode) return null;
+    if (!confirmExistingSignatureChange()) return null;
+
+    return PdfExportService.export(file, fields, appMode);
+  };
+
+  const handleExportPdf = async () => {
+    if (!file || !appMode) return;
 
     setIsExporting(true);
     setExportStatus(null);
     try {
-      const bytes = await PdfExportService.export(file, fields, appMode);
+      const bytes = await generatePdf();
+      if (!bytes) return;
       const blob = new Blob([bytes.slice().buffer as ArrayBuffer], {
         type: 'application/pdf',
       });
@@ -217,6 +250,37 @@ export const DesignerToolbar: React.FC = () => {
       setIsExporting(false);
     }
   };
+
+  const handleContinueToSigner = async () => {
+    if (!file || !onContinueToSigner) return;
+
+    setIsExporting(true);
+    setExportStatus(null);
+    try {
+      const bytes = await generatePdf();
+      if (!bytes) return;
+      const templateFile = new File(
+        [bytes.slice().buffer as ArrayBuffer],
+        `template-${file.name.replace(/\.pdf$/i, '')}.pdf`,
+        { type: 'application/pdf' }
+      );
+      await onContinueToSigner(templateFile);
+    } catch (error) {
+      setExportStatus({
+        message:
+          error instanceof Error
+            ? error.message
+            : '無法帶入簽名階段，請再試一次。',
+        error: true,
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const isGuidedDesigner =
+    appMode === 'designer' && Boolean(onContinueToSigner);
+  const isBusy = isExporting || isTransitioning;
 
   return (
     <ToolbarContainer aria-label="PDF 編輯工具列">
@@ -258,25 +322,51 @@ export const DesignerToolbar: React.FC = () => {
         </>
       )}
 
-      <ExportButton
-        $primary
-        onClick={handleExportPdf}
-        disabled={isExporting || (appMode === 'signer' && !isComplete)}
-        title={
-          appMode === 'signer' && !isComplete
-            ? '請先修正所有必填欄位'
-            : undefined
-        }
-      >
-        {isExporting ? (
-          <LoaderCircle size={18} className="spin" />
-        ) : appMode === 'designer' ? (
-          <FileSignature size={18} />
-        ) : (
-          <Download size={18} />
-        )}
-        <span>{appMode === 'designer' ? '匯出範本 PDF' : '完成並匯出'}</span>
-      </ExportButton>
+      {isGuidedDesigner ? (
+        <>
+          <ExportButton
+            onClick={handleExportPdf}
+            disabled={isBusy}
+            title="下載可編輯的 AcroForm 範本 PDF"
+          >
+            <Download size={18} />
+            <span>下載範本 PDF</span>
+          </ExportButton>
+          <ContinueButton
+            $primary
+            onClick={handleContinueToSigner}
+            disabled={isBusy}
+            title="將目前設計匯出為 AcroForm PDF 並帶入簽名階段"
+          >
+            {isBusy ? (
+              <LoaderCircle size={18} className="spin" />
+            ) : (
+              <ArrowRight size={18} />
+            )}
+            <span>下一步</span>
+          </ContinueButton>
+        </>
+      ) : (
+        <ExportButton
+          $primary
+          onClick={handleExportPdf}
+          disabled={isBusy || (appMode === 'signer' && !isComplete)}
+          title={
+            appMode === 'signer' && !isComplete
+              ? '請先修正所有必填欄位'
+              : undefined
+          }
+        >
+          {isExporting ? (
+            <LoaderCircle size={18} className="spin" />
+          ) : appMode === 'designer' ? (
+            <FileSignature size={18} />
+          ) : (
+            <Download size={18} />
+          )}
+          <span>{appMode === 'designer' ? '匯出範本 PDF' : '完成並匯出'}</span>
+        </ExportButton>
+      )}
 
       {exportStatus && (
         <StatusMessage $error={exportStatus.error} role="status">
